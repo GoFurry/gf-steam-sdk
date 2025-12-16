@@ -1,7 +1,6 @@
 # GF-Steam-SDK
 
-[![Last Version](https://img.shields.io/github/release/GoFurry/gf-steam-sdk/all.svg?color=brightgreen)](https://github.com/GoFurry/gf-steam-sdk/releases)
-[![Downloads](https://img.shields.io/github/downloads/GoFurry/gf-steam-sdk/total?logo=github&color=brightgreen)](https://github.com/GoFurry/gf-steam-sdk/releases)
+[![Last Version](https://img.shields.io/github/release/GoFurry/gf-steam-sdk/all.svg?logo=github&color=brightgreen)](https://github.com/GoFurry/gf-steam-sdk/releases)
 [![License](https://img.shields.io/github/license/GoFurry/gf-steam-sdk)](LICENSE)
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.24-blue)](go.mod)
 
@@ -14,7 +13,7 @@ A lightweight, modular Go SDK for the Steam Open Platform, providing Steam WebAP
 ## 🌟 Core Features | 核心特性 🌟
 
 ### 1. 模块化架构设计 | Modular Architecture
-- 拆分 **Player/Game/Stats/Crawler** 四大核心模块, 职责清晰, 可按需使用
+- 拆分 **Player/Game/Stats/Crawler/Server** 五大核心模块, 职责清晰, 可按需使用
 - 统一入口 `SteamSDK` 管理, 支持按需初始化, 降低资源占用
 
 ### 2. 灵活的链式配置 | Flexible Chain Configuration
@@ -33,12 +32,13 @@ A lightweight, modular Go SDK for the Steam Open Platform, providing Steam WebAP
 - 异步爬取 + 最大深度限制: 提升效率同时防止无限递归
 
 ### 5. 完整功能覆盖 | Comprehensive Features
-| 模块       | 核心能力                                  | 接口示例                                  |
-|------------|-------------------------------------------|-------------------------------------------|
-| Player     | 玩家信息查询(批量支持)、在线状态检测     | `GetPlayerSummaries("76561198000000000")`  |
-| Game       | 已拥有游戏查询、游戏详情、多平台时长统计   | `GetOwnedGames("76561198000000000", true)` |
-| Stats      | 游戏成就查询、解锁时间统计                 | `GetPlayerAchievements("7656...", 550, "zh")` |
-| Crawler    | Steam 商店页爬取、HTML 存储、自定义爬取    | `GetGameStoreRawHTML(550)`                |
+| 模块      | 核心能力                              | 接口示例                                                                                                               |
+|---------|-----------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| Player  | 玩家信息查询(批量支持)、在线状态检测               | `GetPlayerSummaries("76561198000000000")`                                                                          |
+| Game    | 已拥有游戏查询、游戏详情、多平台时长统计              | `GetOwnedGames("76561198000000000", true)`                                                                         |
+| Stats   | 游戏成就查询、解锁时间统计                     | `GetPlayerAchievements("7656...", 550, "zh")`                                                                      |
+| Crawler | Steam 商店页爬取、HTML 存储、自定义爬取         | `GetGameStoreRawHTML(550)`<br/>`SaveGameStoreRawHTML(550, "/storage/")`                                            |
+| Server  | A2S 服务器信息查询(基础/玩家/规则)、批量限流重试 | `GetServerDetail("110.42.54.147:52023")`<br/>`GetServerDetailList([]string{"ip:port"}, 2.0, 5, 30*time.Second, 3)` |
 
 ### 6. 高可用性设计 | High Availability
 - 完善的错误体系: 自定义错误类型(参数错误/API 错误/爬虫错误), 便于问题定位
@@ -142,6 +142,21 @@ fmt.Printf("Achievement: %s\nDescription: %s\nUnlocked: %t\nTime: %s\n",
 a.AchievementName, a.Description, a.Achieved, a.UnlockTimeStr)
 }
 ```
+#### 查询游戏服务器信息 | Get Game Server Details
+```go
+// 调用聚合接口获取完整信息
+detail, err := sdk.Server.GetServerDetail("110.42.54.147:52021")
+if err != nil {
+fmt.Printf("查询失败: %v\n", err)
+return
+}
+
+// 打印查询结果
+fmt.Printf("Server address: %s\n", addr)
+fmt.Printf("Server info: %+v\n", detail.Server)
+fmt.Printf("Player info: %+v\n", detail.Player)
+fmt.Printf("Rules info: %+v\n", detail.Rules)
+```
 ## 📋 Configuration Options | 配置项说明
 
 | 配置项                | 类型         | 说明                                  | 默认值                  |
@@ -178,7 +193,7 @@ a.AchievementName, a.Description, a.Achieved, a.UnlockTimeStr)
 1. **API Key 申请**: 部分接口(如玩家成就、已拥有游戏)需要有效的 Steam API Key, 建议从 [Steam 开发者平台](https://steamcommunity.com/dev/apikey) 申请
 2. **速率限制**: Steam API 有 QPS 限制, 建议通过 `WithQPSLimit` 配置限流, 避免账号封禁
 3. **代理使用**: 爬取 Steam 商店页时建议配置代理池, 否则可能导致 IP 被封禁
-4. **未完成功能**: A2S 游戏服务器数据查询、OpenID 鉴权 API 封装正在开发中, 敬请期待
+4. **未完成功能**: OpenID 鉴权 API 封装正在开发中, 敬请期待
 
 ---
 
