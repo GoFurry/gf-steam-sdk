@@ -1,0 +1,138 @@
+// Package crawler 提供 Steam 网页爬虫核心能力封装
+// 基于 Colly 框架构建, 整合智能反爬策略、动态代理轮换、结构化解析/存储能力, 适配 Steam 风控规则
+// Package crawler provides core encapsulation for Steam web crawling capabilities
+// Built on Colly framework, integrates intelligent anti-crawl strategies, dynamic proxy rotation, structured parsing/storage, adapts to Steam risk control rules
+
+package crawler
+
+import (
+	"fmt"
+	"net/url"
+	"strings"
+	"time"
+
+	"github.com/GoFurry/gf-steam-sdk/internal/crawler"
+	"github.com/GoFurry/gf-steam-sdk/pkg/util/errors"
+	"github.com/gocolly/colly"
+)
+
+// ============================ 通用获取原始 HTML ============================
+
+// GetRawHTML 爬取任意地址的原始 HTML (通用爬取, 无任何跳过验证的策略)
+// 自动应用反爬策略, 返回原始HTML字节流, 适用于自定义解析场景
+// 参数:
+//   - targetURL: 目标地址 | Target URL
+//
+// 返回值:
+//   - []byte: 原始 HTML 字节流 | Raw HTML bytes
+//   - error: 爬取/请求错误 | Crawling/request error
+func (s *CrawlerService) GetRawHTML(targetURL string) ([]byte, error) {
+	// 参数校验 | Parameter validation
+	if targetURL == "" {
+		return nil, errors.NewWithType(errors.ErrTypeParam, "target URL is empty", nil)
+	}
+
+	// 初始化变量 | Initialize variables
+	var html []byte
+	var reqErr error
+
+	// 注册响应回调 | Register response callback (capture raw HTML)
+	s.colly.OnResponse(func(r *colly.Response) {
+		html = r.Body
+	})
+
+	// 注册错误回调 | Register error callback (capture request/response error)
+	s.colly.OnError(func(r *colly.Response, err error) {
+		if r != nil {
+			reqErr = fmt.Errorf("response error (status: %d): %w", r.StatusCode, err)
+		} else {
+			reqErr = fmt.Errorf("request failed (no response): %w", err)
+		}
+	})
+
+	// 执行请求 | Execute request (auto trigger anti-crawl strategy)
+	if err := s.colly.Visit(targetURL); err != nil {
+		return nil, fmt.Errorf("%w: crawl URL failed: %v", errors.ErrTypeCrawler, err)
+	}
+	s.colly.Wait() // 等待异步请求完成 | Wait for async requests to complete
+
+	// 错误检查 | Error check
+	if reqErr != nil {
+		return nil, fmt.Errorf("%w: %v", errors.ErrTypeCrawler, reqErr)
+	}
+	if len(html) == 0 {
+		return nil, fmt.Errorf("%w: empty html response for URL: %s", errors.ErrTypeCrawler, targetURL)
+	}
+
+	return html, nil
+}
+
+// ============================ 通用保存原始 HTML ============================
+
+// SaveRawHTML 爬取任意 Steam 地址的原始 HTML 并保存到指定路径
+// 集成存储管理器，支持自动生成合法文件名，适配不同操作系统路径规则
+// 参数:
+//   - targetURL: 目标地址 | Target URL
+//   - filename: 自定义文件名(为空则自动生成) | Custom filename (auto-generate if empty)
+//
+// 返回值:
+//   - string: 完整存储路径 | Full storage path
+//   - error: 爬取/存储错误 | Crawling/storage error
+func (s *CrawlerService) SaveRawHTML(targetURL string, filename string) (string, error) {
+	// 获取原始 HTML | Get raw HTML
+	html, err := s.GetRawHTML(targetURL)
+	if err != nil {
+		return "", err
+	}
+
+	// 自动生成文件名 | Auto-generate filename (avoid special chars/long filename)
+	if filename == "" {
+		filename = generateFilenameFromURL(targetURL)
+	}
+
+	// 初始化存储管理器并保存 | Initialize storage manager and save
+	s.storage = crawler.NewStorage(s.cfg.CrawlerStorageDir)
+	fullPath, err := s.storage.SaveHTML(filename, html)
+	if err != nil {
+		return "", fmt.Errorf("%w: save generic HTML failed: %v", errors.ErrTypeCrawler, err)
+	}
+
+	return fullPath, nil
+}
+
+// generateFilenameFromURL 基于URL自动生成合法文件名
+// 替换特殊字符、截断超长名称，兜底使用时间戳命名，适配跨平台存储规则
+// 示例: https://store.steampowered.com/app/550/ → store.steampowered.com_app_550.html
+// 参数:
+//   - targetURL: 目标URL | Target URL
+//
+// 返回值:
+//   - string: 合法文件名 | Valid filename
+func generateFilenameFromURL(targetURL string) string {
+	parsedURL, err := url.Parse(targetURL)
+	if err != nil {
+		// 兜底: 纳秒级时间戳命名 | Fallback: nanosecond timestamp (avoid duplication)
+		return fmt.Sprintf("crawl_%d.html", time.Now().UnixNano())
+	}
+
+	// 处理路径 | Process path (replace special chars, keep core identifier)
+	path := strings.Trim(parsedURL.Path, "/")
+	path = strings.ReplaceAll(path, "/", "_")
+	path = strings.ReplaceAll(path, "?", "_")
+	path = strings.ReplaceAll(path, "&", "_")
+	path = strings.ReplaceAll(path, "=", "_")
+
+	// 生成文件名 | Generate filename
+	filename := fmt.Sprintf("%s_%s.html", parsedURL.Host, path)
+	// 截断超长文件名 | Truncate long filename (avoid system limits)
+	if len(filename) > 50 {
+		filename = filename[:50] + ".html"
+	}
+
+	// 路径为空时补充标识 | Add identifier if path is empty
+	if filename == fmt.Sprintf("%s_.html", parsedURL.Host) {
+		filename = fmt.Sprintf("%s_home_%d.html", parsedURL.Host, time.Now().Unix())
+	}
+
+	return filename
+}
