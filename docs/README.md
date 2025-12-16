@@ -1,7 +1,7 @@
 # GF-Steam-SDK
 
-[![Downloads](https://img.shields.io/github/downloads/GoFurry/gf-steam-sdk/total?logo=github)](https://github.com/GoFurry/gf-steam-sdk/releases)
 [![Last Version](https://img.shields.io/github/release/GoFurry/gf-steam-sdk/all.svg?color=brightgreen)](https://github.com/GoFurry/gf-steam-sdk/releases)
+[![Downloads](https://img.shields.io/github/downloads/GoFurry/gf-steam-sdk/total?logo=github&color=brightgreen)](https://github.com/GoFurry/gf-steam-sdk/releases)
 [![License](https://img.shields.io/github/license/GoFurry/gf-steam-sdk)](LICENSE)
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.24-blue)](go.mod)
 
