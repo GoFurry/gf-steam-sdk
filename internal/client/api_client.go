@@ -146,13 +146,16 @@ func (c *Client) DoRequest(method, baseURL string, params url.Values) (map[strin
 
 		// 记录重试错误
 		// Record retry error
-		if err != nil {
-			errRequest = fmt.Errorf("request failed (retry %d): status_code=%d, err=%w, cost_time=%v",
-				i, resp.StatusCode, err, costTime)
-		} else {
-			errRequest = fmt.Errorf("request failed (retry %d): status_code=%d, err=nil, cost_time=%v",
-				i, resp.StatusCode, costTime)
+		statusCode := "nil"
+		if resp != nil {
+			statusCode = util.Int2String(resp.StatusCode)
 		}
+		reqErr := "nil"
+		if err != nil {
+			reqErr = err.Error()
+		}
+		errRequest = fmt.Errorf("request failed (retry %d): status_code=%v, err=%w, cost_time=%v",
+			i, statusCode, reqErr, costTime)
 
 		// 仅对 429(限流)/5xx(服务器错误) 进行重试
 		// Only retry for 429 (rate limit)/5xx (server error)

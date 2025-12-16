@@ -7,6 +7,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	steamConfig "github.com/GoFurry/gf-steam-sdk/pkg/config"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam"
@@ -38,7 +39,18 @@ func main() {
 
 	// 初始化SDK配置
 	// Initialize SDK configuration
-	cfg := steamConfig.NewDefaultConfig()
+	cfg := steamConfig.NewDefaultConfig(). // 默认配置
+		WithAPIKey("BFC7066EB6E87843EF78948D5671BFC0"). // API Key
+		WithProxyURL("http://127.0.0.1:7897"). // 代理IP, 中国地区需要添加
+		WithProxyAuth("", ""). // 代理认证信息, 账号, 密码
+		WithTimeout(5*time.Second). // 请求超时时间
+		WithRetryTimes(2). // 失败重试次数
+		WithRateLimit(8.0, 15). // 限速
+		WithHeaders(map[string]string{ // 自定义请求头
+			"Content-Type":    "application/json",
+			"User-Agent":      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+			"Accept-Language": "zh-CN,zh",
+		})
 
 	// 创建Steam SDK实例
 	// Create Steam SDK instance
