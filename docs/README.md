@@ -1,7 +1,7 @@
 # GF-Steam-SDK
 
-[![Downloads](https://img.shields.io/github/downloads/GoFurry/gf-steam-sdk/total?style=flat-square&logo=github)](https://github.com/GoFurry/gf-steam-sdk/releases)
-[![Last Version](https://img.shields.io/github/release/GoFurry/gf-steam-sdk/all.svg?style=flat-square&color=brightgreen)](https://github.com/GoFurry/gf-steam-sdk/releases)
+[![Downloads](https://img.shields.io/github/downloads/GoFurry/gf-steam-sdk/total?logo=github)](https://github.com/GoFurry/gf-steam-sdk/releases)
+[![Last Version](https://img.shields.io/github/release/GoFurry/gf-steam-sdk/all.svg?color=brightgreen)](https://github.com/GoFurry/gf-steam-sdk/releases)
 [![License](https://img.shields.io/github/license/GoFurry/gf-steam-sdk)](LICENSE)
 [![Go Version](https://img.shields.io/badge/go-%3E%3D1.24-blue)](go.mod)
 
@@ -197,5 +197,5 @@ a.AchievementName, a.Description, a.Achieved, a.UnlockTimeStr)
 ---
 
 ## 📞 Contact | 联系作者
-- GitHub: [@GoFurry](2660621624@qq.com)
+- GitHub: [@GoFurry](https://github.com/GoFurry)
 - 项目地址: [https://github.com/GoFurry/gf-steam-sdk](https://github.com/GoFurry/gf-steam-sdk)
