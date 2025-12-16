@@ -6,12 +6,12 @@
 package crawler
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"time"
 
 	"github.com/GoFurry/gf-steam-sdk/pkg/util"
-	"github.com/GoFurry/gf-steam-sdk/pkg/util/log"
 )
 
 // Storage HTML 存储管理器
@@ -32,7 +32,7 @@ func NewStorage(baseDir string) *Storage {
 	// 确保基础目录存在
 	// Ensure base directory exists (create if not)
 	if err := os.MkdirAll(baseDir, 0755); err != nil {
-		log.Error("[Storage] 创建基础目录失败", err)
+		fmt.Print("[Storage] 创建基础目录失败", err)
 	}
 	return &Storage{
 		baseDir: baseDir,

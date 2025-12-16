@@ -13,7 +13,6 @@ import (
 	"github.com/GoFurry/gf-steam-sdk/pkg/models"
 	"github.com/GoFurry/gf-steam-sdk/pkg/util"
 	"github.com/GoFurry/gf-steam-sdk/pkg/util/errors"
-	"github.com/GoFurry/gf-steam-sdk/pkg/util/log"
 	"github.com/bytedance/sonic"
 )
 
@@ -50,7 +49,6 @@ func (s *PlayerService) GetPlayerSummariesRawBytes(steamIDs string) (respBytes [
 	// 调用内部 Client 发送请求 | Call internal Client (auto apply proxy/rate limit/retry)
 	resp, err := s.client.DoRequest("GET", BASE_URL, params)
 	if err != nil {
-		log.Errorf("[PlayerService] GetPlayerSummariesRawBytes: Steam API 请求失败: %v", err)
 		return respBytes, err
 	}
 

@@ -12,7 +12,6 @@ import (
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/game"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/player"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/stats"
-	"github.com/GoFurry/gf-steam-sdk/pkg/util/log"
 )
 
 // 文档参考 | Documentation references:
@@ -41,8 +40,6 @@ type SteamSDK struct {
 //   - *SteamSDK: SDK 实例 | SDK instance
 //   - error: 初始化失败错误 | Initialization error
 func NewSteamSDK(cfg *config.SteamConfig) (*SteamSDK, error) {
-	log.Info("[SteamSDK] 初始化 Steam SDK 实例")
-
 	// 兜底API Key | Fallback API Key (avoid request failure due to empty value)
 	if cfg.APIKey == "" {
 		cfg.APIKey = "steam-api-key"
@@ -50,7 +47,6 @@ func NewSteamSDK(cfg *config.SteamConfig) (*SteamSDK, error) {
 	// 创建内部 Client | Create internal Client (integrates retry/proxy/rate limit)
 	cli, err := client.NewClient(cfg)
 	if err != nil {
-		log.Errorf("[SteamSDK] 创建内部 Client 失败: %v", err)
 		return nil, err
 	}
 
