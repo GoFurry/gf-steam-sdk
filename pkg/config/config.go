@@ -34,6 +34,7 @@ type SteamConfig struct {
 	RateLimitQPS   float64           `json:"rate_limit_qps" env:"STEAM_RATE_LIMIT_QPS"`     // 限速QPS
 	RateLimitBurst int               `json:"rate_limit_burst" env:"STEAM_RATE_LIMIT_BURST"` // 突发QPS上限
 	Headers        map[string]string `json:"headers"`                                       // 请求头
+	IsDebug        bool              `json:"is_debug"`                                      // 调试模式
 
 	// 运行时 | Runtime
 	Transport *http.Transport `json:"-"` // 运行时构建的 Transport | Runtime-built Transport
@@ -174,6 +175,7 @@ func NewDefaultConfig() *SteamConfig {
 		RetryTimes:     retryTimes,
 		RateLimitQPS:   rateLimitQPS,
 		RateLimitBurst: rateLimitBurst,
+		IsDebug:        false,
 
 		// 爬虫配置 | Crawler config
 		CrawlerUserAgent:   crawlerUA,
@@ -196,14 +198,20 @@ func NewDefaultConfig() *SteamConfig {
 
 // ============================ 基础链式配置 ============================
 
+// Debug 调试模式
+// 返回值:
+//   - *SteamConfig: 配置实例(支持链式调用) | Config instance (chain call supported)
+func (c *SteamConfig) Debug() *SteamConfig {
+	c.IsDebug = true
+	return c
+}
+
 // WithAPIKey 自定义API Key
 // 参数:
 //   - apiKey: Steam API 密钥 | Steam API key
 //
 // 返回值:
 //   - *SteamConfig: 配置实例(支持链式调用) | Config instance (chain call supported)
-//
-// WithAPIKey 自定义API Key
 func (c *SteamConfig) WithAPIKey(apiKey string) *SteamConfig {
 	c.APIKey = apiKey
 	return c
