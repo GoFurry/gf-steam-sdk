@@ -50,6 +50,9 @@ func (s *CrawlerService) GetRawHTML(targetURL string) ([]byte, error) {
 		}
 	})
 
+	if s.cfg.IsDebug {
+		fmt.Printf("[Info] Start colly.Visit: %s \n", targetURL)
+	}
 	// 执行请求 | Execute request (auto trigger anti-crawl strategy)
 	if err := s.colly.Visit(targetURL); err != nil {
 		return nil, fmt.Errorf("%w: crawl URL failed: %v", errors.ErrTypeCrawler, err)
@@ -79,6 +82,9 @@ func (s *CrawlerService) GetRawHTML(targetURL string) ([]byte, error) {
 //   - string: 完整存储路径 | Full storage path
 //   - error: 爬取/存储错误 | Crawling/storage error
 func (s *CrawlerService) SaveRawHTML(targetURL string, filename string) (string, error) {
+	if s.cfg.IsDebug {
+		fmt.Printf("[Info] Start GetRawHTML \n")
+	}
 	// 获取原始 HTML | Get raw HTML
 	html, err := s.GetRawHTML(targetURL)
 	if err != nil {
@@ -89,9 +95,19 @@ func (s *CrawlerService) SaveRawHTML(targetURL string, filename string) (string,
 	if filename == "" {
 		filename = generateFilenameFromURL(targetURL)
 	}
+	if s.cfg.IsDebug {
+		fmt.Printf("[Info] generateFilenameFromURL %s\n", filename)
+	}
 
+	if s.cfg.IsDebug {
+		fmt.Printf("[Info] NewStorage Init \n")
+	}
 	// 初始化存储管理器并保存 | Initialize storage manager and save
 	s.storage = crawler.NewStorage(s.cfg.CrawlerStorageDir)
+
+	if s.cfg.IsDebug {
+		fmt.Printf("[Info] Start SaveHTML \n")
+	}
 	fullPath, err := s.storage.SaveHTML(filename, html)
 	if err != nil {
 		return "", fmt.Errorf("%w: save generic HTML failed: %v", errors.ErrTypeCrawler, err)

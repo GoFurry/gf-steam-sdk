@@ -7,6 +7,7 @@ package crawler
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"net/url"
 	"strconv"
@@ -64,7 +65,7 @@ func (a *AntiCrawl) Apply(c *colly.Collector) {
 		// 设置随机 Referer
 		// Set random Referer
 		r.Headers.Set("Referer", a.getRandomReferer())
-		// 设置随机 Accept-Language（可取消注释启用）
+		// 设置随机 Accept-Language(可取消注释启用)
 		// Set random Accept-Language (uncomment to enable)
 		//r.Headers.Set("Accept-Language", a.getRandomLang())
 	})
@@ -76,6 +77,10 @@ func (a *AntiCrawl) Apply(c *colly.Collector) {
 			r.Request.Retry()
 		}
 	})
+
+	if a.cfg.IsDebug {
+		fmt.Printf("[Info] Apply Anti-crawl Rules \n")
+	}
 }
 
 // getRandomDelay 生成随机请求延迟

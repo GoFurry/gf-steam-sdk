@@ -44,6 +44,10 @@ func NewClient(cfg *config.SteamConfig) (*Client, error) {
 		cfg = config.NewDefaultConfig()
 	}
 
+	if cfg.IsDebug {
+		fmt.Printf("[Info] Start NewClient Init \n")
+	}
+
 	// 校验配置合法性
 	// Validate configuration legality
 	if err := cfg.Validate(); err != nil {
@@ -69,6 +73,10 @@ func NewClient(cfg *config.SteamConfig) (*Client, error) {
 	}
 	limiter := rate.NewLimiter(rate.Limit(qps), burst)
 
+	if cfg.IsDebug {
+		fmt.Printf("[Info] End NewClient Init \n")
+	}
+
 	return &Client{
 		cfg:     cfg,
 		client:  httpClient,
@@ -87,6 +95,10 @@ func NewClient(cfg *config.SteamConfig) (*Client, error) {
 //   - map[string]interface{}: 解析后的 JSON 响应 | Parsed JSON response
 //   - error: 请求/解析失败时返回错误 | Error if request/parsing fails
 func (c *Client) DoRequest(method, baseURL string, params url.Values) (map[string]interface{}, error) {
+	if c.cfg.IsDebug {
+		fmt.Printf("[Info] Start DoRequest \n")
+	}
+
 	// 创建带超时的上下文
 	// Create context with timeout
 	ctx, cancel := context.WithTimeout(context.Background(), c.cfg.Timeout)
@@ -133,6 +145,9 @@ func (c *Client) DoRequest(method, baseURL string, params url.Values) (map[strin
 			req.Header.Set(k, v)
 		}
 
+		if c.cfg.IsDebug {
+			fmt.Printf("[Info] Start %s %s \n", method, requestURL.String())
+		}
 		// 发送请求
 		// Send request
 		resp, err = c.client.Do(req)
@@ -141,6 +156,9 @@ func (c *Client) DoRequest(method, baseURL string, params url.Values) (map[strin
 		// 请求成功(200 状态码)则退出重试
 		// Exit retry if request succeeds (200 status code)
 		if err == nil && resp.StatusCode == http.StatusOK {
+			if c.cfg.IsDebug {
+				fmt.Printf("[Success] cost time: %v, %s %s \n", costTime, method, requestURL.String())
+			}
 			break
 		}
 
@@ -156,6 +174,10 @@ func (c *Client) DoRequest(method, baseURL string, params url.Values) (map[strin
 		}
 		errRequest = fmt.Errorf("request failed (retry %d): status_code=%v, err=%w, cost_time=%v",
 			i, statusCode, reqErr, costTime)
+
+		if c.cfg.IsDebug {
+			fmt.Printf("[Error] %s \n", errRequest.Error())
+		}
 
 		// 仅对 429(限流)/5xx(服务器错误) 进行重试
 		// Only retry for 429 (rate limit)/5xx (server error)
@@ -202,5 +224,8 @@ func (c *Client) DoRequest(method, baseURL string, params url.Values) (map[strin
 		return nil, fmt.Errorf("%w: %v", errors.ErrAPIResponse, err)
 	}
 
+	if c.cfg.IsDebug {
+		fmt.Printf("[Info] End DoRequest \n")
+	}
 	return result, nil
 }

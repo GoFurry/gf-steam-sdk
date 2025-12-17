@@ -6,6 +6,8 @@
 package crawler
 
 import (
+	"fmt"
+
 	"github.com/GoFurry/gf-steam-sdk/internal/crawler"
 	"github.com/GoFurry/gf-steam-sdk/pkg/config"
 	"github.com/gocolly/colly"
@@ -33,6 +35,10 @@ type CrawlerService struct {
 // 返回值:
 //   - *CrawlerService: 爬虫服务实例 | Crawler service instance
 func NewCrawlerService(cfg *config.SteamConfig) *CrawlerService {
+	if cfg.IsDebug {
+		fmt.Printf("[Info] Start NewCrawlerService Init \n")
+	}
+
 	// 初始化 Colly 基础实例(基础爬虫配置) | Initialize Colly base instance (basic crawler config)
 	c := colly.NewCollector(
 		colly.UserAgent(cfg.CrawlerUserAgent), // 自定义User-Agent | Custom User-Agent
@@ -57,6 +63,10 @@ func NewCrawlerService(cfg *config.SteamConfig) *CrawlerService {
 
 	// 初始化内部工具 | Initialize internal tools
 	parser := crawler.NewParser() // HTML结构化解析器 | HTML structured parser
+
+	if cfg.IsDebug {
+		fmt.Printf("[Info] End NewCrawlerService Init \n")
+	}
 
 	return &CrawlerService{
 		cfg:          cfg,

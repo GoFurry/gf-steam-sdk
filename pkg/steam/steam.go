@@ -6,6 +6,8 @@
 package steam
 
 import (
+	"fmt"
+
 	"github.com/GoFurry/gf-steam-sdk/internal/client"
 	"github.com/GoFurry/gf-steam-sdk/pkg/config"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/crawler"
@@ -49,6 +51,9 @@ func NewSteamSDK(cfg *config.SteamConfig) (*SteamSDK, error) {
 	// 创建内部 Client | Create internal Client (integrates retry/proxy/rate limit)
 	cli, err := client.NewClient(cfg)
 	if err != nil {
+		if cfg.IsDebug {
+			fmt.Printf("[Error] NewSteamSDK NewClient error: %v\n", err)
+		}
 		return nil, err
 	}
 

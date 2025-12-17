@@ -6,6 +6,7 @@
 package crawler
 
 import (
+	"fmt"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -42,6 +43,10 @@ func NewProxyRotator(cfg *config.SteamConfig) *ProxyRotator {
 	pool := cfg.ProxyPool
 	if len(pool) == 0 && cfg.ProxyURL != "" {
 		pool = []string{cfg.ProxyURL}
+	}
+
+	if cfg.IsDebug {
+		fmt.Printf("[Info] Init NewProxyRotator \n")
 	}
 
 	return &ProxyRotator{
