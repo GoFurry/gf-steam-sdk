@@ -29,7 +29,7 @@ const (
 
 	// TestAPIKey 测试用Steam API密钥（需确保有效性）
 	// TestAPIKey is the Steam API key for testing (validity must be ensured)
-	TestAPIKey = "BFC7066EB6E87843EF78948D5671BFC0"
+	TestAPIKey = "********B6E87843EF78948D********"
 
 	// TestProxyURL 适配国内访问Steam API的代理地址
 	// TestProxyURL is the proxy address for accessing Steam API in China
