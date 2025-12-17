@@ -79,6 +79,7 @@ func main() {
 	.WithRetryCount(3)                      // 重试次数
 	.WithCrawlerAsync(true)                 // 爬虫异步模式
 	.WithCrawlerMaxDepth(2)                 // 爬虫最大深度
+	.Debug()                                // 调试模式
 
 	// 2. 创建 SDK 实例
 	sdk, err := steam.NewSteamSDK(cfg)
@@ -159,28 +160,29 @@ fmt.Printf("Rules info: %+v\n", detail.Rules)
 ```
 ## 📋 Configuration Options | 配置项说明
 
-| 配置项                | 类型         | 说明                                  | 默认值                  |
-|-----------------------|--------------|---------------------------------------|-------------------------|
-| APIKey                | string       | Steam API Key(从[Steam 开发者平台](https://steamcommunity.com/dev/apikey)获取) | 环境变量`STEAM_API_KEY`，无则为"dummy-key" |
-| ProxyURL              | string       | 代理地址(中国区访问Steam必填，格式：http://ip:port) | 环境变量`STEAM_PROXY_URL`，无则为空 |
-| ProxyUser             | string       | 代理认证用户名 | 环境变量`STEAM_PROXY_USER`，无则为空 |
-| ProxyPass             | string       | 代理认证密码 | 环境变量`STEAM_PROXY_PASS`，无则为空 |
-| ProxyPool             | []string     | 代理IP池(环境变量以逗号分隔，自动过滤空值) | 环境变量`STEAM_PROXY_POOL`，无则为空数组 |
-| ProxyStrategy         | string       | 代理选择策略(仅支持 round_robin/random) | "round_robin" |
-| Timeout               | time.Duration| 请求超时时间(秒) | 环境变量`STEAM_TIMEOUT`，无则为5 * time.Second |
-| RetryTimes            | int          | 请求重试次数(仅接受>=0的值) | 环境变量`STEAM_RETRY_TIMES`，无则为2 |
-| RateLimitQPS          | float64      | API接口限速QPS(每秒请求数) | 环境变量`STEAM_RATE_LIMIT_QPS`，无则为10.0 |
-| RateLimitBurst        | int          | API接口突发QPS上限 | 环境变量`STEAM_RATE_LIMIT_BURST`，无则为20 |
-| Headers               | map[string]string | 全局请求头自定义键值对 | nil |
-| CrawlerUserAgent      | string       | 爬虫默认 User-Agent | 环境变量`STEAM_CRAWLER_UA`，无则为"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" |
-| CrawlerAsync          | bool         | 爬虫是否启用异步模式 | 环境变量`STEAM_CRAWLER_ASYNC`，无则为false |
-| CrawlerMaxDepth       | int          | 爬虫最大爬取深度 | 环境变量`STEAM_CRAWLER_MAX_DEPTH`，无则为1 |
-| CrawlerConcurrency    | int          | 爬虫并发数 | 环境变量`STEAM_CRAWLER_CONCURRENCY`，无则为5 |
-| CrawlerDelay          | time.Duration| 爬虫每次请求延迟(毫秒) | 环境变量`STEAM_CRAWLER_DELAY`，无则为500 * time.Millisecond |
-| CrawlerQPS            | float64      | 爬虫限速QPS | 环境变量`STEAM_CRAWLER_QPS`，无则为5.0 |
-| CrawlerBurst          | int          | 爬虫突发QPS上限 | 环境变量`STEAM_CRAWLER_BURST`，无则为10 |
-| CrawlerCookie         | string       | Steam登录Cookie(用于爬取需登录的内容) | 环境变量`STEAM_CRAWLER_COOKIE`，无则为空 |
-| CrawlerStorageDir     | string       | 爬虫HTML存储基础目录 | 环境变量`STEAM_CRAWLER_STORAGE_DIR`，无则为"./steam-crawl-data" |
+| 配置项                | 类型                | 说明                                                                     | 默认值                                                                                      |
+|--------------------|-------------------|------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| APIKey             | string            | Steam API Key(从[Steam 开发者平台](https://steamcommunity.com/dev/apikey)获取) | 环境变量`STEAM_API_KEY`，无则为"dummy-key"                                                       |
+| ProxyURL           | string            | 代理地址(中国区访问Steam必填，格式：http://ip:port)                                   | 环境变量`STEAM_PROXY_URL`，无则为空                                                               |
+| ProxyUser          | string            | 代理认证用户名                                                                | 环境变量`STEAM_PROXY_USER`，无则为空                                                              |
+| ProxyPass          | string            | 代理认证密码                                                                 | 环境变量`STEAM_PROXY_PASS`，无则为空                                                              |
+| ProxyPool          | []string          | 代理IP池(环境变量以逗号分隔，自动过滤空值)                                                | 环境变量`STEAM_PROXY_POOL`，无则为空数组                                                            |
+| ProxyStrategy      | string            | 代理选择策略(仅支持 round_robin/random)                                         | "round_robin"                                                                            |
+| Timeout            | time.Duration     | 请求超时时间(秒)                                                              | 环境变量`STEAM_TIMEOUT`，无则为5 * time.Second                                                   |
+| RetryTimes         | int               | 请求重试次数(仅接受>=0的值)                                                       | 环境变量`STEAM_RETRY_TIMES`，无则为2                                                             |
+| RateLimitQPS       | float64           | API接口限速QPS(每秒请求数)                                                      | 环境变量`STEAM_RATE_LIMIT_QPS`，无则为10.0                                                       |
+| RateLimitBurst     | int               | API接口突发QPS上限                                                           | 环境变量`STEAM_RATE_LIMIT_BURST`，无则为20                                                       |
+| Headers            | map[string]string | 全局请求头自定义键值对                                                            | nil                                                                                      |
+| CrawlerUserAgent   | string            | 爬虫默认 User-Agent                                                        | 环境变量`STEAM_CRAWLER_UA`，无则为"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" |
+| CrawlerAsync       | bool              | 爬虫是否启用异步模式                                                             | 环境变量`STEAM_CRAWLER_ASYNC`，无则为false                                                       |
+| CrawlerMaxDepth    | int               | 爬虫最大爬取深度                                                               | 环境变量`STEAM_CRAWLER_MAX_DEPTH`，无则为1                                                       |
+| CrawlerConcurrency | int               | 爬虫并发数                                                                  | 环境变量`STEAM_CRAWLER_CONCURRENCY`，无则为5                                                     |
+| CrawlerDelay       | time.Duration     | 爬虫每次请求延迟(毫秒)                                                           | 环境变量`STEAM_CRAWLER_DELAY`，无则为500 * time.Millisecond                                      |
+| CrawlerQPS         | float64           | 爬虫限速QPS                                                                | 环境变量`STEAM_CRAWLER_QPS`，无则为5.0                                                           |
+| CrawlerBurst       | int               | 爬虫突发QPS上限                                                              | 环境变量`STEAM_CRAWLER_BURST`，无则为10                                                          |
+| CrawlerCookie      | string            | Steam登录Cookie(用于爬取需登录的内容)                                              | 环境变量`STEAM_CRAWLER_COOKIE`，无则为空                                                          |
+| CrawlerStorageDir  | string            | 爬虫HTML存储基础目录                                                           | 环境变量`STEAM_CRAWLER_STORAGE_DIR`，无则为"./steam-crawl-data"                                  |
+| Debug              | 无                 | 开启调试模式                                                                 | 无                                                                                        |
 
 ## 📚 Documentation References | 文档参考
 - [Steam Web API 官方文档](https://developer.valvesoftware.com/wiki/Steam_Web_API)
