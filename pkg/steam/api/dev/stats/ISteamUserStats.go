@@ -16,8 +16,7 @@ import (
 )
 
 const (
-	// BASE_URL 玩家成就查询API基础地址 | Base URL for player achievement query API
-	BASE_URL = "https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1/"
+	ISteamUserStats = util.STEAM_API_BASE_URL + "ISteamUserStats"
 )
 
 // ============================ 原始字节流接口 ============================
@@ -52,7 +51,7 @@ func (s *StatsService) GetPlayerAchievementsRawBytes(steamID string, appID uint6
 	params.Set("l", lang) // 语言参数 | Language parameter
 
 	// 调用Client发送请求 | Call Client to send request (auto trigger retry/proxy/rate limit)
-	resp, err := s.client.DoRequest("GET", BASE_URL, params)
+	resp, err := s.client.DoRequest("GET", ISteamUserStats+"/GetPlayerAchievements/v1/", params)
 	if err != nil {
 		return respBytes, err
 	}

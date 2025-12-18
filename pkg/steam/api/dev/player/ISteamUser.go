@@ -17,8 +17,7 @@ import (
 )
 
 const (
-	// BASE_URL 玩家信息查询API基础地址 | Base URL for player info query API
-	BASE_URL = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/"
+	ISteamUser = util.STEAM_API_BASE_URL + "ISteamUser"
 )
 
 // ============================ 原始字节流接口 ============================
@@ -47,7 +46,7 @@ func (s *PlayerService) GetPlayerSummariesRawBytes(steamIDs string) (respBytes [
 	params.Set("steamids", steamIDs)
 
 	// 调用内部 Client 发送请求 | Call internal Client (auto apply proxy/rate limit/retry)
-	resp, err := s.client.DoRequest("GET", BASE_URL, params)
+	resp, err := s.client.DoRequest("GET", ISteamUser+"/GetPlayerSummaries/v2/", params)
 	if err != nil {
 		return respBytes, err
 	}

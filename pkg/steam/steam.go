@@ -10,11 +10,11 @@ import (
 
 	"github.com/GoFurry/gf-steam-sdk/internal/client"
 	"github.com/GoFurry/gf-steam-sdk/pkg/config"
+	"github.com/GoFurry/gf-steam-sdk/pkg/steam/api/dev/game"
+	"github.com/GoFurry/gf-steam-sdk/pkg/steam/api/dev/player"
+	"github.com/GoFurry/gf-steam-sdk/pkg/steam/api/dev/stats"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/crawler"
-	"github.com/GoFurry/gf-steam-sdk/pkg/steam/game"
-	"github.com/GoFurry/gf-steam-sdk/pkg/steam/player"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/server"
-	"github.com/GoFurry/gf-steam-sdk/pkg/steam/stats"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/util"
 )
 

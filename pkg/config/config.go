@@ -24,6 +24,7 @@ import (
 type SteamConfig struct {
 	// 基本配置 | Basic configuration
 	APIKey         string            `json:"api_key" env:"STEAM_API_KEY"`                   // Steam API 密钥
+	AccessToken    string            `json:"access_token" env:"STEAM_ACCESS_TOKEN"`         // Steam Access Token
 	ProxyURL       string            `json:"proxy_url" env:"STEAM_PROXY_URL"`               // 代理地址(中国区必填)
 	ProxyUser      string            `json:"proxy_user" env:"STEAM_PROXY_USER"`             // 代理用户名
 	ProxyPass      string            `json:"proxy_pass" env:"STEAM_PROXY_PASS"`             // 代理密码
@@ -164,6 +165,7 @@ func NewDefaultConfig() *SteamConfig {
 	cfg := &SteamConfig{
 		// 基础配置 | Basic config
 		APIKey:         os.Getenv("STEAM_API_KEY"),
+		AccessToken:    os.Getenv("STEAM_ACCESS_TOKEN"),
 		ProxyURL:       os.Getenv("STEAM_PROXY_URL"),
 		ProxyUser:      proxyUser,
 		ProxyPass:      proxyPass,
@@ -212,6 +214,17 @@ func (c *SteamConfig) Debug() *SteamConfig {
 //   - *SteamConfig: 配置实例(支持链式调用) | Config instance (chain call supported)
 func (c *SteamConfig) WithAPIKey(apiKey string) *SteamConfig {
 	c.APIKey = apiKey
+	return c
+}
+
+// WithAccessToken 自定义 Access Token
+// 参数:
+//   - accessToken: Access Token
+//
+// 返回值:
+//   - *SteamConfig: 配置实例 | Config instance (chain call supported)
+func (c *SteamConfig) WithAccessToken(accessToken string) *SteamConfig {
+	c.AccessToken = accessToken
 	return c
 }
 

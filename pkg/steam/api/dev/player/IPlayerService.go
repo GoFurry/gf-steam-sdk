@@ -1,9 +1,9 @@
-// Package game 提供 Steam 游戏信息相关 API 封装
-// 核心能力包括已拥有游戏查询、游戏详情获取等, 支持免费游戏筛选、多平台时长统计
-// Package game provides API encapsulation for Steam game information
-// Core capabilities include owned games query, game details retrieval, supports free game filtering and multi-platform playtime statistics
+// Package player 提供 Steam 玩家信息相关 API 封装
+// 核心能力包括玩家基本信息查询、好友列表获取等, 支持批量 SteamID 处理（最大100个）
+// Package player provides API encapsulation for Steam player information
+// Core capabilities include player info query, friend list retrieval, supports batch SteamID processing (max 100)
 
-package game
+package player
 
 import (
 	"fmt"
@@ -16,8 +16,7 @@ import (
 )
 
 const (
-	// BASE_URL 玩家已拥有游戏查询API基础地址 | Base URL for player owned games query API
-	BASE_URL = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/"
+	IPlayerService = util.STEAM_API_BASE_URL + "IPlayerService"
 )
 
 // ============================ 原始字节流接口 ============================
@@ -31,7 +30,7 @@ const (
 // 返回值:
 //   - []byte: 原始API响应字节流 | Raw API response bytes
 //   - error: 请求/参数错误 | Request/parameter error
-func (s *GameService) GetOwnedGamesRawBytes(steamID string, includeFree bool) (respBytes []byte, err error) {
+func (s *PlayerService) GetOwnedGamesRawBytes(steamID string, includeFree bool) (respBytes []byte, err error) {
 	// 参数校验 | Parameter validation
 	if steamID == "" {
 		return respBytes, errors.ErrInvalidSteamID
@@ -45,7 +44,7 @@ func (s *GameService) GetOwnedGamesRawBytes(steamID string, includeFree bool) (r
 	params.Set("include_played_free_games", util.Int2String(util.B2i(includeFree))) // 包含免费游戏 | Include free games
 
 	// 调用Client发送请求 | Call Client (auto apply proxy/rate limit from chain config)
-	resp, err := s.client.DoRequest("GET", BASE_URL, params)
+	resp, err := s.client.DoRequest("GET", IPlayerService+"/GetOwnedGames/v1/", params)
 	if err != nil {
 		return respBytes, err
 	}
@@ -70,7 +69,7 @@ func (s *GameService) GetOwnedGamesRawBytes(steamID string, includeFree bool) (r
 // 返回值:
 //   - models.SteamOwnedGamesResponse: Steam原始响应结构体 | Steam raw response struct
 //   - error: 请求/解析错误 | Request/parse error
-func (s *GameService) GetOwnedGamesRawModel(steamID string, includeFree bool) (models.SteamOwnedGamesResponse, error) {
+func (s *PlayerService) GetOwnedGamesRawModel(steamID string, includeFree bool) (models.SteamOwnedGamesResponse, error) {
 	// 获取原始字节流 | Get raw bytes
 	bytes, err := s.GetOwnedGamesRawBytes(steamID, includeFree)
 	if err != nil {
@@ -97,7 +96,7 @@ func (s *GameService) GetOwnedGamesRawModel(steamID string, includeFree bool) (m
 // 返回值:
 //   - []*models.OwnedGame: 精简游戏信息列表 | Simplified game info list
 //   - error: 请求/解析错误 | Request/parse error
-func (s *GameService) GetOwnedGamesBrief(steamID string, includeFree bool) ([]*models.OwnedGame, error) {
+func (s *PlayerService) GetOwnedGamesBrief(steamID string, includeFree bool) ([]*models.OwnedGame, error) {
 	// 获取原始结构化模型 | Get raw structured model
 	rawGames, err := s.GetOwnedGamesRawModel(steamID, includeFree)
 	if err != nil {
@@ -131,6 +130,6 @@ func (s *GameService) GetOwnedGamesBrief(steamID string, includeFree bool) ([]*m
 // 简化调用方式，提供更直观的方法名
 // GetOwnedGames is the alias of simplified model interface
 // Simplifies calling with more intuitive method name
-func (s *GameService) GetOwnedGames(steamID string, includeFree bool) ([]*models.OwnedGame, error) {
+func (s *PlayerService) GetOwnedGames(steamID string, includeFree bool) ([]*models.OwnedGame, error) {
 	return s.GetOwnedGamesBrief(steamID, includeFree)
 }
