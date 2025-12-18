@@ -13,6 +13,7 @@ import (
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/api/dev/game"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/api/dev/player"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/api/dev/stats"
+	"github.com/GoFurry/gf-steam-sdk/pkg/steam/api/store"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/crawler"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/server"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/util"
@@ -29,9 +30,10 @@ import (
 // Aggregates all core business modules, provides a unified SDK call entry, supports chain configuration extension
 // SteamSDK 全局 Steam SDK 入口
 type SteamSDK struct {
-	Player  *player.PlayerService   // 玩家模块 | Player module (SteamID/个人信息/好友等)
-	Game    *game.GameService       // 游戏模块 | Game module (已拥有游戏/游戏信息等)
-	Stats   *stats.StatsService     // 统计模块 | Stats module (成就/游戏时长等)
+	Player  *player.PlayerService   // 玩家模块 | Player module (SteamID/个人信息/好友等) API from api.steampowered.com
+	Game    *game.GameService       // 游戏模块 | Game module (已拥有游戏/游戏信息等) API from api.steampowered.com
+	Stats   *stats.StatsService     // 统计模块 | Stats module (成就/游戏时长等) API from api.steampowered.com
+	Store   *store.StoreService     // 商店模块 | Store module (接口数据来自商店界面) API from store.steampowered.com
 	Crawler *crawler.CrawlerService // 爬虫模块 | Crawler module (网页爬取/反爬策略)
 	Server  *server.ServerService   // 服务器模块 | Server module (集成官方指定A2S库)
 	Util    *util.UtilService       // 工具模块 | Util module (一些可能会用到的工具函数)
@@ -50,6 +52,10 @@ func NewSteamSDK(cfg *config.SteamConfig) (*SteamSDK, error) {
 	if cfg.APIKey == "" {
 		cfg.APIKey = "steam-api-key"
 	}
+	// 兜底AccessToken | Fallback AccessToken (avoid request failure due to empty value)
+	if cfg.AccessToken == "" {
+		cfg.AccessToken = "steam-access-token"
+	}
 	// 创建内部 Client | Create internal Client (integrates retry/proxy/rate limit)
 	cli, err := client.NewClient(cfg)
 	if err != nil {
@@ -67,5 +73,6 @@ func NewSteamSDK(cfg *config.SteamConfig) (*SteamSDK, error) {
 		Crawler: crawler.NewCrawlerService(cfg),
 		Server:  server.NewServerService(cli),
 		Util:    util.NewUtilService(cli),
+		Store:   store.NewStoreService(cli),
 	}, nil
 }

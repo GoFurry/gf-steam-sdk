@@ -113,6 +113,7 @@ func (c *Client) DoRequest(method, baseURL string, params url.Values) (map[strin
 	// 追加 API Key 到请求参数
 	// Append API Key to request parameters
 	params.Set("key", c.cfg.APIKey)
+	params.Set("access_token", c.cfg.AccessToken)
 
 	// 构建完整请求 URL
 	// Build full request URL
