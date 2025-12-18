@@ -35,9 +35,7 @@ type SteamConfig struct {
 	RateLimitBurst int               `json:"rate_limit_burst" env:"STEAM_RATE_LIMIT_BURST"` // 突发QPS上限
 	Headers        map[string]string `json:"headers"`                                       // 请求头
 	IsDebug        bool              `json:"is_debug"`                                      // 调试模式
-
-	// 运行时 | Runtime
-	Transport *http.Transport `json:"-"` // 运行时构建的 Transport | Runtime-built Transport
+	Transport      *http.Transport   `json:"-"`                                             // 构建的 Transport | Built Transport
 
 	// 爬虫配置 | Crawler configuration
 	CrawlerUserAgent   string        `json:"crawler_user_agent" env:"STEAM_CRAWLER_UA"`           // 爬虫user-agent
