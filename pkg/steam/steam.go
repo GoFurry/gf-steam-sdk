@@ -15,6 +15,7 @@ import (
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/player"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/server"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam/stats"
+	"github.com/GoFurry/gf-steam-sdk/pkg/steam/util"
 )
 
 // 文档参考 | Documentation references:
@@ -33,6 +34,7 @@ type SteamSDK struct {
 	Stats   *stats.StatsService     // 统计模块 | Stats module (成就/游戏时长等)
 	Crawler *crawler.CrawlerService // 爬虫模块 | Crawler module (网页爬取/反爬策略)
 	Server  *server.ServerService   // 服务器模块 | Server module (集成官方指定A2S库)
+	Util    *util.UtilService       // 工具模块 | Util module (一些可能会用到的工具函数)
 }
 
 // NewSteamSDK 创建全局 Steam SDK 实例
@@ -64,5 +66,6 @@ func NewSteamSDK(cfg *config.SteamConfig) (*SteamSDK, error) {
 		Stats:   stats.NewStatsService(cli),
 		Crawler: crawler.NewCrawlerService(cfg),
 		Server:  server.NewServerService(cli),
+		Util:    util.NewUtilService(cli),
 	}, nil
 }
