@@ -28,6 +28,11 @@ func main() {
 	// 1.2 DeleteCart v1 need:access_token
 	//fmt.Println(sdk.Develop.DeleteUserCart(nil))
 
+	// 2 IBillingService
+	// 2.1 GetRecurringSubscriptionsCount v1 need:access_token
+	//count, err := sdk.Develop.GetSubscriptionBillCount(nil)
+	//fmt.Println(count)
+
 	// IPlayerService
 	// GetOwnedGames v1 need:key/access_token
 	//ownedGames, err := sdk.Develop.GetOwnedGames("76561198370695025", true)
