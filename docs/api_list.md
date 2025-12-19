@@ -41,14 +41,117 @@ store.steampowered.com
 ---
 
 ### 3 crawler
-#### 3.1
+#### 3.1 Generic
+3.1.1 GetRawHTML <br/>
+Crawl any address to get HTML <br/>
+爬取任意地址的原始 HTML (通用爬取, 无任何跳过验证的策略) <br/>
+```go
+htmlBytes, err := sdk.Crawler.GetGameStoreRawHTML(appID)
+```
+3.1.2 SaveRawHTML <br/>
+Crawl any address to save HTML <br/>
+爬取并保存任意地址的原始 HTML (通用爬取, 无任何跳过验证的策略) <br/>
+```go
+savePath, err := sdk.Crawler.SaveGameStoreRawHTML(550, "")
+```
+#### 3.2 Game Page
+3.2.1 GetGameStoreRawHTML <br/>
+Get game page raw HTML <br/>
+获取游戏详情页原始 HTML <br/>
+```go
+htmlBytes, err := sdk.Crawler.GetGameStoreRawHTML(appID)
+```
+3.2.2 SaveGameStoreRawHTML <br/>
+Save game page raw HTML <br/>
+保存游戏详情页原始 HTML <br/>
+```go
+savePath, err := sdk.Crawler.SaveGameStoreRawHTML(550, "")
+```
+
 
 ---
 
 ### 4 Server
-#### 4.1
+#### 4.1 Single
+4.1.1 QueryServerInfo <br/>
+Queries the basic information of a single server <br/>
+查询单个服务器的基础信息 <br/>
+```go
+info, err := sdk.Server.QueryServerInfo()
+```
+4.1.2 QueryServerPlayers <br/>
+Queries the player information of a single server <br/>
+查询单个服务器的玩家信息 <br/>
+```go
+player, err := sdk.Server.QueryServerPlayers()
+```
+4.1.3 QueryServerRules <br/>
+Queries the rule information of a single server <br/>
+查询单个服务器的规则信息 <br/>
+```go
+info, err := sdk.Server.QueryServerRules()
+```
+4.1.4 QueryServerInfoList <br/>
+QueryServerInfoList batch queries the basic information of multiple servers (with rate limit, retry, timeout). <br/>
+Uses concurrent query method to ensure the result order is consistent with the input address list, supports exponential backoff retry strategy <br/>
+批量查询多个服务器的基础信息(带限流、重试、超时) <br/>
+采用并发方式查询, 保证结果顺序与输入地址列表一致, 支持指数退避重试策略 <br/>
+```go
+infoList, infoErrs, err := sdk.Server.QueryServerInfoList(addrs, TestQPS, TestBurst, TestTimeout, TestRetry)
+```
+4.1.5 QueryServerPlayersList <br/>
+QueryServerPlayersList batch queries the players information of multiple servers (with rate limit, retry, timeout). <br/>
+Uses concurrent query method to ensure the result order is consistent with the input address list, supports exponential backoff retry strategy <br/>
+批量查询多个服务器的玩家信息(带限流、重试、超时) <br/>
+采用并发方式查询, 保证结果顺序与输入地址列表一致, 支持指数退避重试策略 <br/>
+```go
+infoList, infoErrs, err := sdk.Server.QueryServerPlayersList(addrs, TestQPS, TestBurst, TestTimeout, TestRetry)
+```
+4.1.6 QueryServerRulesList <br/>
+QueryServerRulesList batch queries the rules information of multiple servers (with rate limit, retry, timeout). <br/>
+Uses concurrent query method to ensure the result order is consistent with the input address list, supports exponential backoff retry strategy <br/>
+批量查询多个服务器的规则信息(带限流、重试、超时) <br/>
+采用并发方式查询, 保证结果顺序与输入地址列表一致, 支持指数退避重试策略 <br/>
+```go
+infoList, infoErrs, err := sdk.Server.QueryServerRulesList(addrs, TestQPS, TestBurst, TestTimeout, TestRetry)
+```
+#### 4.2 Aggregation
+4.2.1 GetServerDetail <br/>
+It aggregately gets the complete information of a single server (basic info + players + rules) <br/>
+聚合获取单个服务器的完整信息 <br/>
+```go
+detail, err := sdk.Server.GetServerDetail()
+```
+4.2.2 GetServerDetailList <br/>
+GetServerDetailList batch queries the complete aggregated information of multiple servers (with rate limit, retry, timeout) <br/>
+Internally calls the GetServerDetail aggregation interface, uses concurrent query method to ensure the result order is consistent with the input address list <br/>
+Supports exponential backoff retry strategy and thread-safe result writing mechanism <br/>
+GetServerDetailList 批量查询多个服务器的完整聚合信息(带限流、重试、超时) <br/>
+内部调用GetServerDetail聚合接口, 采用并发方式查询, 保证结果顺序与输入地址列表一致 <br/>
+支持指数退避重试策略, 线程安全的结果写入机制 <br/>
+```go
+detailList, detailErrs, err := sdk.Server.GetServerDetailList(addrs, TestQPS, TestBurst, TestTimeout, TestRetry)
+```
 
 ---
 
 ### 5 Util
-#### 5.1
+#### 5.1 Key
+5.1.1 GetStoreToken <br/>
+Open your browser to get the Steam Store token <br/>
+打开浏览器获取 Steam 商店令牌 <br/>
+```go
+sdk.Util.GetStoreToken()
+```
+5.1.2 GetCommunityToken <br/>
+Open your browser to get the Steam Community token <br/>
+打开浏览器获取 Steam 社区令牌 <br/>
+```go
+sdk.Util.GetCommunityToken()
+```
+5.1.3 GetAPIKey <br/>
+Open your browser to get the Steam developer API Key <br/>
+打开浏览器获取 Steam 开发者 API Key <br/>
+```go
+sdk.Util.GetAPIKey()
+```
