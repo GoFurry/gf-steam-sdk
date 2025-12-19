@@ -5,7 +5,7 @@ import (
 	"github.com/GoFurry/gf-steam-sdk/pkg/util/errors"
 )
 
-// ============================ 获取原始 HTML ============================
+// ============================ Raw HTML 获取原始 HTML ============================
 
 // GetGameStoreRawHTML 获取游戏详情页原始 HTML
 // 针对 Steam 商店页优化爬取策略, 自动拼接游戏详情页URL, 返回原始HTML字节流
@@ -22,7 +22,7 @@ func (s *CrawlerService) GetGameStoreRawHTML(appID uint64) ([]byte, error) {
 	return s.GetRawHTML(buildGameStoreURL(appID))
 }
 
-// ============================ 保存原始 HTML ============================
+// ============================ Save HTML 保存原始 HTML ============================
 
 // SaveGameStoreRawHTML 获取游戏详情页原始 HTML 并保存到指定路径
 // 自动生成标准化文件名(game_${appID}.html), 适配 Steam 游戏页存储规范
@@ -37,7 +37,7 @@ func (s *CrawlerService) SaveGameStoreRawHTML(appID uint64, filename string) (st
 	return s.SaveRawHTML(buildGameStoreURL(appID), "")
 }
 
-// ============================ 内部工具方法 ============================
+// ============================ Tool 内部工具方法 ============================
 
 // buildGameStoreURL 构造Steam游戏商店页URL
 // 标准化URL拼接规则，避免手动拼接导致的格式错误

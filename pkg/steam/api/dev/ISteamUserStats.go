@@ -14,7 +14,7 @@ const (
 	ISteamUserStats = util.STEAM_API_BASE_URL + "ISteamUserStats"
 )
 
-// ============================ 原始字节流接口 ============================
+// ============================ Structed Raw Model Raw Bytes 原始字节流接口 ============================
 
 // GetPlayerAchievementsRawBytes 获取玩家单游戏成就的原始字节流
 // 适用于需要自定义解析、二次处理的场景, 保留API返回原始数据
@@ -93,7 +93,7 @@ func (s *DevService) GetPlayerAchievementsRawModel(steamID string, appID uint64,
 	return statsResp, nil
 }
 
-// ============================ 精简模型接口 ============================
+// ============================ Brief Model 精简模型接口 ============================
 
 // GetPlayerAchievementsBrief 获取玩家单游戏成就的精简模型
 // 转换为业务友好的精简结构体, 剔除冗余字段, 补充格式化时间等易用性字段

@@ -1,8 +1,3 @@
-// Package game 提供 Steam 游戏信息相关 API 封装
-// 核心能力包括已拥有游戏查询、游戏详情获取等, 支持免费游戏筛选、多平台时长统计
-// Package game provides API encapsulation for Steam game information
-// Core capabilities include owned games query, game details retrieval, supports free game filtering and multi-platform playtime statistics
-
 package dev
 
 import (
@@ -19,7 +14,7 @@ const (
 	IAccountCartService = util.STEAM_API_BASE_URL + "IAccountCartService"
 )
 
-// ============================ 原始字节流接口 ============================
+// ============================ Raw Bytes 原始字节流接口 ============================
 
 // GetUserCartRawBytes requires access_token, return cart info from the access_token's owner.
 // If globally init access_token, you can use access_token = nil.
@@ -45,7 +40,7 @@ func (s *DevService) GetUserCartRawBytes(countryCode string, accessToken *string
 	return respBytes, nil
 }
 
-// ============================ 结构化原始模型接口 ============================
+// ============================ Structed Raw Model 结构化原始模型接口 ============================
 
 // GetUserCartRawModel requires access_token, return cart info from the access_token's owner.
 // If globally init access_token, you can use access_token = nil.
@@ -64,7 +59,7 @@ func (s *DevService) GetUserCartRawModel(countryCode string, accessToken *string
 	return cartResp, nil
 }
 
-// ============================ 精简模型接口 ============================
+// ============================ Brief Model 精简模型接口 ============================
 
 // GetUserCartBrief requires access_token, return cart info from the access_token's owner.
 // If globally init access_token, you can use access_token = nil.
@@ -95,6 +90,8 @@ func (s *DevService) GetUserCartBrief(countryCode string, accessToken *string) (
 		FormattedTotal: rawCart.Response.Cart.Subtotal.FormattedAmount,
 	}, nil
 }
+
+// ============================ Default Interface 默认接口 ============================
 
 // GetUserCart requires access_token, return cart info from the access_token's owner.
 // If globally init access_token, you can use access_token = nil.

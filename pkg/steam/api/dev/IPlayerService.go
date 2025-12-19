@@ -14,7 +14,7 @@ const (
 	IPlayerService = util.STEAM_API_BASE_URL + "IPlayerService"
 )
 
-// ============================ 原始字节流接口 ============================
+// ============================ Raw Bytes 原始字节流接口 ============================
 
 // GetOwnedGamesRawBytes 获取玩家已拥有游戏的原始字节流
 // 支持筛选免费游戏, 返回原始API响应字节流, 适用于自定义解析场景
@@ -53,7 +53,7 @@ func (s *DevService) GetOwnedGamesRawBytes(steamID string, includeFree bool) (re
 	return respBytes, nil
 }
 
-// ============================ 结构化原始模型接口 ============================
+// ============================ Structed Raw Model 结构化原始模型接口 ============================
 
 // GetOwnedGamesRawModel 获取玩家已拥有游戏的结构化原始模型
 // 解析为Steam官方定义的原始结构体, 保留所有返回字段
@@ -80,7 +80,7 @@ func (s *DevService) GetOwnedGamesRawModel(steamID string, includeFree bool) (mo
 	return gamesResp, nil
 }
 
-// ============================ 精简模型接口 ============================
+// ============================ Brief Model 精简模型接口 ============================
 
 // GetOwnedGamesBrief 获取玩家已拥有游戏的精简模型
 // 转换为业务友好的精简结构体, 补充游戏图标/封面URL、格式化时间等易用性字段

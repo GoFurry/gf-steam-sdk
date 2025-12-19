@@ -15,7 +15,7 @@ const (
 	ISteamUser = util.STEAM_API_BASE_URL + "ISteamUser"
 )
 
-// ============================ 原始字节流接口 ============================
+// ============================ Raw Bytes 原始字节流接口 ============================
 
 // GetPlayerSummariesRawBytes 获取玩家信息的原始字节流
 // 支持批量查询(最多100个SteamID), 返回原始API响应字节流, 适用于自定义解析场景
@@ -55,7 +55,7 @@ func (s *DevService) GetPlayerSummariesRawBytes(steamIDs string) (respBytes []by
 	return respBytes, nil
 }
 
-// ============================ 结构化原始模型接口 ============================
+// ============================ Structed Raw Model 结构化原始模型接口 ============================
 
 // GetPlayerSummariesRawModel 获取玩家信息的结构化原始模型
 // 解析为Steam官方定义的原始结构体, 保留所有返回字段
@@ -81,7 +81,7 @@ func (s *DevService) GetPlayerSummariesRawModel(steamIDs string) (models.SteamPl
 	return steamResp, nil
 }
 
-// ============================ 精简模型接口 ============================
+// ============================ Brief Model 精简模型接口 ============================
 
 // GetPlayerSummariesBrief 获取玩家信息的精简模型
 // 转换为业务友好的精简结构体, 补充格式化时间、在线状态布尔值等易用性字段
