@@ -7,6 +7,11 @@ api.steampowered.com
 | IAccountCartService/DeleteCart/v1                 | sdk.Develop.DeleteUserCart           | `access token`  | 清空购物车的数据                   |
 | IBillingService/GetRecurringSubscriptionsCount/v1 | sdk.Develop.GetSubscriptionBillCount | `access token`  | 获取 access token 拥有者的订阅账单数量 |
 | ICommunityService/GetApps/v1                      | sdk.Develop.GetApps                  | `access token`  | 获取入参对应的商品的简略信息             |
+| IFamilyGroupsService/GetChangeLog/v1              | sdk.Develop.GetFamilyChangeLog       | `access token`  | 返回家庭组变更日志                  |
+| IFamilyGroupsService/GetFamilyGroup/v1            | sdk.Develop.GetFamilyMembers         | `access token`  | 返回家庭组信息                    |
+| IFamilyGroupsService/GetFamilyGroupForUser/v1     | sdk.Develop.GetFamilyGroup           | `access token`  | 返回当前access token用户的家庭组详细信息 |
+| IFamilyGroupsService/GetPlaytimeSummary/v1        | sdk.Develop.GetFamilyPlaytime        | `access token`  | 获取家庭组游玩记录信息                |
+| IFamilyGroupsService/GetSharedLibraryApps/v1      | sdk.Develop.GetSharedApps            | `access token`  | 获取家庭组共享的游戏                 |
 
 #### 1.1 IAccountCartService
 1.1.1 GetCart/v1 <br/>
@@ -33,11 +38,47 @@ count, err := sdk.Develop.GetSubscriptionBillCount(nil)
 ```
 #### 1.3 ICommunityService
 1.3.1 GetApps/v1 <br/>
-Get app brief information <br/>
+Get app brief information <br/> 
 获取入参对应的商品的简略信息 <br/>
 Required: `access token`
 ```go
 apps, err := sdk.Develop.GetApps([]string{"993090", "550"})
+```
+#### 1.4 IFamilyGroupsService
+1.4.1 GetChangeLog/v1 <br/>
+Get family change log <br/>
+获取家庭组变更日志 <br/>
+Required: `access token`
+```go
+sdk.Develop.GetFamilyChangeLog("1136785")
+```
+1.4.2 GetFamilyGroup/v1 <br/>
+Get family info <br/>
+获取家庭组信息 <br/>
+Required: `access token`
+```go
+sdk.Develop.GetFamilyMembers("1136785")
+```
+1.4.3 GetFamilyGroupForUser/v1 <br/>
+Get family group info by user <br/>
+获取当前access token用户的家庭组详细信息 <br/>
+Required: `access token`
+```go
+sdk.Develop.GetFamilyGroup("1136785", false)
+```
+1.4.4 GetPlaytimeSummary/v1 <br/>
+Get family playtime <br/>
+获取家庭组游玩记录信息 <br/>
+Required: `access token`
+```go
+sdk.Develop.GetFamilyPlaytime("1136785")
+```
+1.4.5 GetSharedLibraryApps/v1 <br/>
+Get family shared apps <br/>
+获取家庭组共享的游戏 <br/>
+Required: `access token`
+```go
+sdk.Develop.GetSharedApps("1136785")
 ```
 
 ---

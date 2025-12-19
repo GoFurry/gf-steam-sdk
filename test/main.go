@@ -36,9 +36,52 @@ func main() {
 
 	// 3 ICommunityService
 	// 3.1 GetApps v1
-	apps, err := sdk.Develop.GetApps([]string{"993090", "550"})
-	for _, app := range apps {
-		fmt.Println(app)
+	//apps, err := sdk.Develop.GetApps([]string{"993090", "550"})
+	//for _, app := range apps {
+	//	fmt.Println(app)
+	//}
+
+	// 4 IFamilyGroupsService
+	// 4.1 GetChangeLog v1
+	//changeLogs, err := sdk.Develop.GetFamilyChangeLog("1136785")
+	//cnt = 0
+	//for _, clog := range changeLogs {
+	//	cnt++
+	//	fmt.Println(clog)
+	//	if cnt > 10 {
+	//		break
+	//	}
+	//}
+	// 4.2 GetFamilyGroup v1
+	//family, err := sdk.Develop.GetFamilyMembers("1136785")
+	//cnt = 0
+	//for _, member := range family.Members {
+	//	cnt++
+	//	fmt.Println(member)
+	//	if cnt > 10 {
+	//		break
+	//	}
+	//}
+	// 4.3 GetFamilyGroupForUser v1
+	//familyGroup, err := sdk.Develop.GetFamilyGroup("1136785", false)
+	//fmt.Println(familyGroup)
+	// 4.4 GetPlaytimeSummary v1
+	//playtime, err := sdk.Develop.GetFamilyPlaytime("1136785")
+	//for _, p := range playtime {
+	//	cnt++
+	//	fmt.Println(p)
+	//	if cnt > 10 {
+	//		break
+	//	}
+	//}
+	// 4.5 GetSharedLibraryApps v1
+	sharedApps, err := sdk.Develop.GetSharedApps("1136785")
+	for _, a := range sharedApps.Apps {
+		cnt++
+		fmt.Println(a)
+		if cnt > 10 {
+			break
+		}
 	}
 
 	// IPlayerService
