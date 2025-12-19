@@ -1,5 +1,13 @@
 ### 1 develop 
 api.steampowered.com
+
+| API接口                                             | 封装接口                                 | 强制参数            | 描述                         |
+|---------------------------------------------------|--------------------------------------|-----------------|----------------------------|
+| IAccountCartService/GetCart/v1                    | sdk.Develop.GetUserCart              | `access token`  | 获取购物车的数据                   |
+| IAccountCartService/DeleteCart/v1                 | sdk.Develop.DeleteUserCart           | `access token`  | 清空购物车的数据                   |
+| IBillingService/GetRecurringSubscriptionsCount/v1 | sdk.Develop.GetSubscriptionBillCount | `access token`  | 获取 access token 拥有者的订阅账单数量 |
+| ICommunityService/GetApps/v1                      | sdk.Develop.GetApps                  | `access token`  | 获取入参对应的商品的简略信息             |
+
 #### 1.1 IAccountCartService
 1.1.1 GetCart/v1 <br/>
 Get user's cart items <br/>
@@ -36,11 +44,24 @@ apps, err := sdk.Develop.GetApps([]string{"993090", "550"})
 
 ### 2 store
 store.steampowered.com
+
+| API接口                                             | 封装接口                                 | 强制参数            | 描述                         |
+|---------------------------------------------------|--------------------------------------|-----------------|----------------------------|
+|                     |               |   |                    |
+
 #### 2.1
 
 ---
 
 ### 3 crawler
+
+| 爬取地址                                        | 封装接口                              | 描述                |
+|---------------------------------------------|-----------------------------------|-------------------|
+| any                                         | sdk.Crawler.GetGameStoreRawHTML   | 爬取任意地址的原始 HTML    |
+| any                                         | sdk.Crawler.SaveGameStoreRawHTML  | 爬取并保存任意地址的原始 HTML |
+| `https://store.steampowered.com/app/appid`  | sdk.Crawler.GetGameStoreRawHTML   | 获取游戏详情页原始 HTML    |
+| `https://store.steampowered.com/app/appid`  | sdk.Crawler.SaveGameStoreRawHTML  | 保存游戏详情页原始 HTML    |
+
 #### 3.1 Generic
 3.1.1 GetRawHTML <br/>
 Crawl any address to get HTML <br/>
@@ -72,24 +93,36 @@ savePath, err := sdk.Crawler.SaveGameStoreRawHTML(550, "")
 ---
 
 ### 4 Server
+
+| 封装接口                              | 描述                |
+|-----------------------------------|-------------------|
+| sdk.Server.QueryServerInfo        | 查询单个服务器的基础信息      |
+| sdk.Server.QueryServerPlayers     | 查询单个服务器的玩家信息      |
+| sdk.Server.QueryServerRules       | 查询单个服务器的规则信息      |
+| sdk.Server.GetServerDetail        | 聚合获取单个服务器的完整信息    |
+| sdk.Server.QueryServerInfoList    | 批量查询多个服务器的基础信息    |
+| sdk.Server.QueryServerPlayersList | 批量查询多个服务器的玩家信息    |
+| sdk.Server.QueryServerRulesList   | 批量查询多个服务器的规则信息    |
+| sdk.Server.GetServerDetailList    | 批量查询多个服务器的完整聚合信息  |
+
 #### 4.1 Single
 4.1.1 QueryServerInfo <br/>
 Queries the basic information of a single server <br/>
 查询单个服务器的基础信息 <br/>
 ```go
-info, err := sdk.Server.QueryServerInfo()
+info, err := sdk.Server.QueryServerInfo(addr)
 ```
 4.1.2 QueryServerPlayers <br/>
 Queries the player information of a single server <br/>
 查询单个服务器的玩家信息 <br/>
 ```go
-player, err := sdk.Server.QueryServerPlayers()
+player, err := sdk.Server.QueryServerPlayers(addr)
 ```
 4.1.3 QueryServerRules <br/>
 Queries the rule information of a single server <br/>
 查询单个服务器的规则信息 <br/>
 ```go
-info, err := sdk.Server.QueryServerRules()
+info, err := sdk.Server.QueryServerRules(addr)
 ```
 4.1.4 QueryServerInfoList <br/>
 QueryServerInfoList batch queries the basic information of multiple servers (with rate limit, retry, timeout). <br/>
@@ -120,7 +153,7 @@ infoList, infoErrs, err := sdk.Server.QueryServerRulesList(addrs, TestQPS, TestB
 It aggregately gets the complete information of a single server (basic info + players + rules) <br/>
 聚合获取单个服务器的完整信息 <br/>
 ```go
-detail, err := sdk.Server.GetServerDetail()
+detail, err := sdk.Server.GetServerDetail(addr)
 ```
 4.2.2 GetServerDetailList <br/>
 GetServerDetailList batch queries the complete aggregated information of multiple servers (with rate limit, retry, timeout) <br/>
@@ -136,6 +169,14 @@ detailList, detailErrs, err := sdk.Server.GetServerDetailList(addrs, TestQPS, Te
 ---
 
 ### 5 Util
+
+| 封装接口                       | 描述                        |
+|----------------------------|---------------------------|
+| sdk.Util.GetStoreToken     | 打开浏览器获取 Steam 商店令牌        |
+| sdk.Util.GetCommunityToken | 打开浏览器获取 Steam 社区令牌        |
+| sdk.Util.GetAPIKey         | 打开浏览器获取 Steam 开发者 API Key |
+
+
 #### 5.1 Key
 5.1.1 GetStoreToken <br/>
 Open your browser to get the Steam Store token <br/>
