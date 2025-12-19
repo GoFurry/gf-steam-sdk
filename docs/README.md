@@ -13,7 +13,7 @@ A lightweight, modular Go SDK for the Steam Open Platform, providing Steam WebAP
 ## 🌟 Core Features | 核心特性 🌟
 
 ### 1. 模块化架构设计 | Modular Architecture
-- 拆分 **Player/Game/Stats/Crawler/Server** 五大核心模块, 职责清晰, 可按需使用
+- 拆分 **Develop/Store/Crawler/Server/Util** 五大核心模块, 职责清晰, 可按需使用
 - 统一入口 `SteamSDK` 管理, 支持按需初始化, 降低资源占用
 
 ### 2. 灵活的链式配置 | Flexible Chain Configuration
@@ -32,12 +32,12 @@ A lightweight, modular Go SDK for the Steam Open Platform, providing Steam WebAP
 - 异步爬取 + 最大深度限制: 提升效率同时防止无限递归
 
 ### 5. 完整功能覆盖 | Comprehensive Features
-| 模块      | 核心能力                              | 接口示例                                                                                                               |
-|---------|-----------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| Player  | 玩家信息查询(批量支持)、在线状态检测               | `GetPlayerSummaries("76561198000000000")`                                                                          |
-| Game    | 已拥有游戏查询、游戏详情、多平台时长统计              | `GetOwnedGames("76561198000000000", true)`                                                                         |
-| Stats   | 游戏成就查询、解锁时间统计                     | `GetPlayerAchievements("7656...", 550, "zh")`                                                                      |
-| Crawler | Steam 商店页爬取、HTML 存储、自定义爬取         | `GetGameStoreRawHTML(550)`<br/>`SaveGameStoreRawHTML(550, "/storage/")`                                            |
+| 模块      | 核心能力                         | 接口示例                                                                                                               |
+|---------|------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| Develop | 封装 api.steampowered.com 的 API           | `()`                                                                                                               |
+| Store   | 封装 store.steampowered.com 的 API              | `()`                                                                         |
+| Util    | 接入 SteamAPI 可能用到的工具方法        | `()`                                                                      |
+| Crawler | Steam 商店页爬取、HTML 存储、自定义爬取    | `GetGameStoreRawHTML(550)`<br/>`SaveGameStoreRawHTML(550, "/storage/")`                                            |
 | Server  | A2S 服务器信息查询(基础/玩家/规则)、批量限流重试 | `GetServerDetail("110.42.54.147:52023")`<br/>`GetServerDetailList([]string{"ip:port"}, 2.0, 5, 30*time.Second, 3)` |
 
 ### 6. 高可用性设计 | High Availability
@@ -88,7 +88,7 @@ func main() {
 	}
 
 	// 3. 调用接口(示例: 查询玩家信息)
-	players, err := sdk.Player.GetPlayerSummaries("76561198000000000")
+	players, err := sdk.Develop.GetPlayerSummaries("76561198000000000")
 	if err != nil {
 		panic(fmt.Sprintf("get player info failed: %v", err))
 	}
@@ -120,7 +120,7 @@ fmt.Printf("HTML saved to: %s\n", savePath)
 #### 查询玩家已拥有游戏 | Get Player Owned Games
 ```go
 // 查询玩家已拥有游戏(包含免费游戏)
-games, err := sdk.Game.GetOwnedGames("76561198000000000", true)
+games, err := sdk.Develop.GetOwnedGames("76561198000000000", true)
 if err != nil {
 panic(err)
 }
@@ -133,7 +133,7 @@ game.Name, game.AppID, game.PlaytimeForever, game.LastPlayedTimeStr)
 #### 查询游戏成就 | Get Game Achievements
 ```go
 // 查询玩家在《Left 4 Dead 2》中的成就(中文)
-achievements, err := sdk.Stats.GetPlayerAchievements("76561198000000000", 550, "zh")
+achievements, err := sdk.Develop.GetPlayerAchievements("76561198000000000", 550, "zh")
 if err != nil {
 panic(err)
 }
@@ -160,41 +160,51 @@ fmt.Printf("Rules info: %+v\n", detail.Rules)
 ```
 ## 📋 Configuration Options | 配置项说明
 
-| 配置项                | 类型                | 说明                                                                     | 默认值                                                                                      |
-|--------------------|-------------------|------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
-| APIKey             | string            | Steam API Key(从[Steam 开发者平台](https://steamcommunity.com/dev/apikey)获取) | 环境变量`STEAM_API_KEY`，无则为"dummy-key"                                                       |
-| ProxyURL           | string            | 代理地址(中国区访问Steam必填，格式：http://ip:port)                                   | 环境变量`STEAM_PROXY_URL`，无则为空                                                               |
-| ProxyUser          | string            | 代理认证用户名                                                                | 环境变量`STEAM_PROXY_USER`，无则为空                                                              |
-| ProxyPass          | string            | 代理认证密码                                                                 | 环境变量`STEAM_PROXY_PASS`，无则为空                                                              |
-| ProxyPool          | []string          | 代理IP池(环境变量以逗号分隔，自动过滤空值)                                                | 环境变量`STEAM_PROXY_POOL`，无则为空数组                                                            |
-| ProxyStrategy      | string            | 代理选择策略(仅支持 round_robin/random)                                         | "round_robin"                                                                            |
-| Timeout            | time.Duration     | 请求超时时间(秒)                                                              | 环境变量`STEAM_TIMEOUT`，无则为5 * time.Second                                                   |
-| RetryTimes         | int               | 请求重试次数(仅接受>=0的值)                                                       | 环境变量`STEAM_RETRY_TIMES`，无则为2                                                             |
-| RateLimitQPS       | float64           | API接口限速QPS(每秒请求数)                                                      | 环境变量`STEAM_RATE_LIMIT_QPS`，无则为10.0                                                       |
-| RateLimitBurst     | int               | API接口突发QPS上限                                                           | 环境变量`STEAM_RATE_LIMIT_BURST`，无则为20                                                       |
-| Headers            | map[string]string | 全局请求头自定义键值对                                                            | nil                                                                                      |
-| CrawlerUserAgent   | string            | 爬虫默认 User-Agent                                                        | 环境变量`STEAM_CRAWLER_UA`，无则为"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" |
-| CrawlerAsync       | bool              | 爬虫是否启用异步模式                                                             | 环境变量`STEAM_CRAWLER_ASYNC`，无则为false                                                       |
-| CrawlerMaxDepth    | int               | 爬虫最大爬取深度                                                               | 环境变量`STEAM_CRAWLER_MAX_DEPTH`，无则为1                                                       |
-| CrawlerConcurrency | int               | 爬虫并发数                                                                  | 环境变量`STEAM_CRAWLER_CONCURRENCY`，无则为5                                                     |
-| CrawlerDelay       | time.Duration     | 爬虫每次请求延迟(毫秒)                                                           | 环境变量`STEAM_CRAWLER_DELAY`，无则为500 * time.Millisecond                                      |
-| CrawlerQPS         | float64           | 爬虫限速QPS                                                                | 环境变量`STEAM_CRAWLER_QPS`，无则为5.0                                                           |
-| CrawlerBurst       | int               | 爬虫突发QPS上限                                                              | 环境变量`STEAM_CRAWLER_BURST`，无则为10                                                          |
-| CrawlerCookie      | string            | Steam登录Cookie(用于爬取需登录的内容)                                              | 环境变量`STEAM_CRAWLER_COOKIE`，无则为空                                                          |
-| CrawlerStorageDir  | string            | 爬虫HTML存储基础目录                                                           | 环境变量`STEAM_CRAWLER_STORAGE_DIR`，无则为"./steam-crawl-data"                                  |
-| Debug              | 无                 | 开启调试模式                                                                 | 无                                                                                        |
+| 配置项                | 类型                | 说明                                                                      | 默认值                                                                                      |
+|--------------------|-------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| APIKey             | string            | Steam API Key(从[Steam 开发者平台](https://steamcommunity.com/dev/apikey)获取)  | 环境变量`STEAM_API_KEY`，无则为"steam-api-key"                                                       |
+| AccessToken        |string             | Steam Access Token(从[Steam 接口](https://store.steampowered.com/pointssummary/ajaxgetasyncconfig)获取 |     环境变量`STEAM_ACCESS_TOKEN`，无则为"steam-access-token"                                                                                     |
+| ProxyURL           | string            | 代理地址(中国区访问Steam必填，格式：http://ip:port)                                    | 环境变量`STEAM_PROXY_URL`，无则为空                                                               |
+| ProxyUser          | string            | 代理认证用户名                                                                 | 环境变量`STEAM_PROXY_USER`，无则为空                                                              |
+| ProxyPass          | string            | 代理认证密码                                                                  | 环境变量`STEAM_PROXY_PASS`，无则为空                                                              |
+| ProxyPool          | []string          | 代理IP池(环境变量以逗号分隔，自动过滤空值)                                                 | 环境变量`STEAM_PROXY_POOL`，无则为空数组                                                            |
+| ProxyStrategy      | string            | 代理选择策略(仅支持 round_robin/random)                                          | "round_robin"                                                                            |
+| Timeout            | time.Duration     | 请求超时时间(秒)                                                               | 环境变量`STEAM_TIMEOUT`，无则为5 * time.Second                                                   |
+| RetryTimes         | int               | 请求重试次数(仅接受>=0的值)                                                        | 环境变量`STEAM_RETRY_TIMES`，无则为2                                                             |
+| RateLimitQPS       | float64           | API接口限速QPS(每秒请求数)                                                       | 环境变量`STEAM_RATE_LIMIT_QPS`，无则为10.0                                                       |
+| RateLimitBurst     | int               | API接口突发QPS上限                                                            | 环境变量`STEAM_RATE_LIMIT_BURST`，无则为20                                                       |
+| Headers            | map[string]string | 全局请求头自定义键值对                                                             | nil                                                                                      |
+| CrawlerUserAgent   | string            | 爬虫默认 User-Agent                                                         | 环境变量`STEAM_CRAWLER_UA`，无则为"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" |
+| CrawlerAsync       | bool              | 爬虫是否启用异步模式                                                              | 环境变量`STEAM_CRAWLER_ASYNC`，无则为false                                                       |
+| CrawlerMaxDepth    | int               | 爬虫最大爬取深度                                                                | 环境变量`STEAM_CRAWLER_MAX_DEPTH`，无则为1                                                       |
+| CrawlerConcurrency | int               | 爬虫并发数                                                                   | 环境变量`STEAM_CRAWLER_CONCURRENCY`，无则为5                                                     |
+| CrawlerDelay       | time.Duration     | 爬虫每次请求延迟(毫秒)                                                            | 环境变量`STEAM_CRAWLER_DELAY`，无则为500 * time.Millisecond                                      |
+| CrawlerQPS         | float64           | 爬虫限速QPS                                                                 | 环境变量`STEAM_CRAWLER_QPS`，无则为5.0                                                           |
+| CrawlerBurst       | int               | 爬虫突发QPS上限                                                               | 环境变量`STEAM_CRAWLER_BURST`，无则为10                                                          |
+| CrawlerCookie      | string            | Steam登录Cookie(用于爬取需登录的内容)                                               | 环境变量`STEAM_CRAWLER_COOKIE`，无则为空                                                          |
+| CrawlerStorageDir  | string            | 爬虫HTML存储基础目录                                                            | 环境变量`STEAM_CRAWLER_STORAGE_DIR`，无则为"./steam-crawl-data"                                  |
+| Debug              | 无                 | 开启调试模式                                                                  | 无                                                                                        |
 
 ## 📚 Documentation References | 文档参考
 - [Steam Web API 官方文档](https://developer.valvesoftware.com/wiki/Steam_Web_API)
 - [Steam 合作伙伴 API 文档](https://partner.steamgames.com/doc/webapi_overview)
 - [Steam API 非官方参考](https://steamapi.xpaw.me/)
+- [获取所有接口信息](https://api.steampowered.com/ISteamWebAPIUtil/GetSupportedAPIList/v1/?key=80806F3DE07A70570AE0D32C094A9221)
 
 ---
 
 ## ⚠️ Notes | 注意事项
 1. **API Key 申请**: 部分接口(如玩家成就、已拥有游戏)需要有效的 Steam API Key, 建议从 [Steam 开发者平台](https://steamcommunity.com/dev/apikey) 申请
-2. **速率限制**: Steam API 有 QPS 限制, 建议通过 `WithQPSLimit` 配置限流, 避免账号封禁
-3. **代理使用**: 爬取 Steam 商店页时建议配置代理池, 否则可能导致 IP 被封禁
+2. **获取Store Token** 部分接口需要此token, [Steam 接口](https://store.steampowered.com/pointssummary/ajaxgetasyncconfig)
+3. **获取Community Token**部分接口需要此token,[Steam 页面](https://steamcommunity.com/my/edit/info)输入JS脚本
+4. **更高权限 API Key**: [申请更高权限](https://partner.steamgames.com/newpartner/)
+```javascript
+const token = JSON.parse(application_config.dataset.loyalty_webapi_token);
+console.log("Steam community token：", token);
+```
+1. **速率限制**: Steam API 有 QPS 限制, 每分钟不超过 100 次, 建议通过 `WithQPSLimit` 配置限流, 避免账号封禁
+2. **代理使用**: 爬取 Steam 商店页时建议配置代理池, 否则可能导致 IP 被封禁
+3. **时间**: steam的时间使用unix时间戳 类似 1698822000
 4. **未完成功能**: OpenID 鉴权 API 封装正在开发中, 敬请期待
 
 ---
