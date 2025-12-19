@@ -1,8 +1,3 @@
-// Package crawler 提供 Steam 网页爬虫核心能力封装
-// 基于 Colly 框架构建, 整合智能反爬策略、动态代理轮换、结构化解析/存储能力, 适配 Steam 风控规则
-// Package crawler provides core encapsulation for Steam web crawling capabilities
-// Built on Colly framework, integrates intelligent anti-crawl strategies, dynamic proxy rotation, structured parsing/storage, adapts to Steam risk control rules
-
 package crawler
 
 import (

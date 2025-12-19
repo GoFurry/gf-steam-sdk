@@ -6,7 +6,11 @@
 // helping developers quickly obtain authentication information required for Steam interface calls
 package util
 
-import "github.com/GoFurry/gf-steam-sdk/internal/client"
+import (
+	"fmt"
+
+	"github.com/GoFurry/gf-steam-sdk/internal/client"
+)
 
 // UtilService Steam 工具服务核心结构体
 // 主要用于辅助获取 Steam 接口调用所需的各类令牌和密钥
@@ -19,4 +23,15 @@ type UtilService struct {
 // NewUtilService 创建UtilService实例, 暴露初始化入口
 func NewUtilService(c *client.Client) *UtilService {
 	return &UtilService{client: c}
+}
+
+// Close 释放UtilService资源
+func (u *UtilService) Close() error {
+	if u.client == nil {
+		return nil
+	}
+	if err := u.client.Close(); err != nil {
+		return fmt.Errorf("UtilService Close failed: %w", err)
+	}
+	return nil
 }

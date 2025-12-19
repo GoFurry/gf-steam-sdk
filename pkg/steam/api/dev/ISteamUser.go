@@ -1,9 +1,4 @@
-// Package player 提供 Steam 玩家信息相关 API 封装
-// 核心能力包括玩家基本信息查询、好友列表获取等, 支持批量 SteamID 处理（最大100个）
-// Package player provides API encapsulation for Steam player information
-// Core capabilities include player info query, friend list retrieval, supports batch SteamID processing (max 100)
-
-package player
+package dev
 
 import (
 	"fmt"
@@ -30,7 +25,7 @@ const (
 // 返回值:
 //   - []byte: 原始API响应字节流 | Raw API response bytes
 //   - error: 请求/参数错误 | Request/parameter error
-func (s *PlayerService) GetPlayerSummariesRawBytes(steamIDs string) (respBytes []byte, err error) {
+func (s *DevService) GetPlayerSummariesRawBytes(steamIDs string) (respBytes []byte, err error) {
 	// 参数校验 | Parameter validation
 	if steamIDs == "" {
 		return respBytes, errors.ErrInvalidSteamID
@@ -70,7 +65,7 @@ func (s *PlayerService) GetPlayerSummariesRawBytes(steamIDs string) (respBytes [
 // 返回值:
 //   - models.SteamPlayerResponse: Steam原始响应结构体 | Steam raw response struct
 //   - error: 请求/解析错误 | Request/parse error
-func (s *PlayerService) GetPlayerSummariesRawModel(steamIDs string) (models.SteamPlayerResponse, error) {
+func (s *DevService) GetPlayerSummariesRawModel(steamIDs string) (models.SteamPlayerResponse, error) {
 	// 获取原始字节流 | Get raw bytes
 	bytes, err := s.GetPlayerSummariesRawBytes(steamIDs)
 	if err != nil {
@@ -96,7 +91,7 @@ func (s *PlayerService) GetPlayerSummariesRawModel(steamIDs string) (models.Stea
 // 返回值:
 //   - []*models.Player: 精简玩家信息列表 | Simplified player info list
 //   - error: 请求/解析错误 | Request/parse error
-func (s *PlayerService) GetPlayerSummariesBrief(steamIDs string) ([]*models.Player, error) {
+func (s *DevService) GetPlayerSummariesBrief(steamIDs string) ([]models.Player, error) {
 
 	// 获取原始结构化模型 | Get raw structured model
 	rawPlayers, err := s.GetPlayerSummariesRawModel(steamIDs)
@@ -105,9 +100,9 @@ func (s *PlayerService) GetPlayerSummariesBrief(steamIDs string) ([]*models.Play
 	}
 
 	// 转换为精简模型 | Convert to simplified model
-	players := make([]*models.Player, 0, len(rawPlayers.Response.Players))
+	players := make([]models.Player, 0, len(rawPlayers.Response.Players))
 	for _, p := range rawPlayers.Response.Players {
-		player := &models.Player{
+		player := models.Player{
 			SteamID:      p.SteamID,
 			PersonaName:  p.PersonaName,
 			ProfileURL:   p.ProfileURL,
@@ -130,6 +125,6 @@ func (s *PlayerService) GetPlayerSummariesBrief(steamIDs string) ([]*models.Play
 // 简化调用方式，提供更直观的方法名
 // GetPlayerSummaries is the alias of simplified model interface
 // Simplifies calling with more intuitive method name
-func (s *PlayerService) GetPlayerSummaries(steamIDs string) ([]*models.Player, error) {
+func (s *DevService) GetPlayerSummaries(steamIDs string) ([]models.Player, error) {
 	return s.GetPlayerSummariesBrief(steamIDs)
 }

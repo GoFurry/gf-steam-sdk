@@ -79,7 +79,7 @@ func NewCrawlerService(cfg *config.SteamConfig) *CrawlerService {
 }
 
 // GetProxyPool 获取当前代理池列表
-// 暴露代理轮换器的代理池，支持外部监控/更新代理列表
+// 暴露代理轮换器的代理池, 支持外部监控/更新代理列表
 // 返回值:
 //   - []string: 代理地址列表(格式: http://ip:port) | Proxy address list (format: http://ip:port)
 func (s *CrawlerService) GetProxyPool() []string {

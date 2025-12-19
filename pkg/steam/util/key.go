@@ -1,7 +1,3 @@
-// Package util 提供 Steam 认证信息获取工具方法
-// 补充 UtilService 的核心功能, 专注于 Steam Store/Community 令牌、API Key 的获取指引
-// Package util provides utility methods for obtaining Steam authentication information
-// Supplements the core functions of UtilService, focusing on guidance for obtaining Steam Store/Community tokens and API Key
 package util
 
 import (

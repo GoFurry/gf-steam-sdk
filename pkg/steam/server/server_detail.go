@@ -1,9 +1,3 @@
-// Package server 提供Steam服务器信息查询相关服务
-// 包含单个/批量服务器基础信息、玩家信息、规则信息的查询能力,
-// 支持限流、重试、超时控制, 保证线程安全
-// Package server provides services for querying Steam server information
-// It includes the ability to query single/batch server basic info, player info, rule info,
-// supports rate limiting, retry, timeout control, and ensures thread safety
 package server
 
 import (

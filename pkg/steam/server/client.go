@@ -7,6 +7,8 @@
 package server
 
 import (
+	"fmt"
+
 	"github.com/GoFurry/gf-steam-sdk/internal/client"
 )
 
@@ -23,4 +25,15 @@ type ServerService struct {
 // Initializes the server query service, relying on the internal client to provide underlying communication capabilities
 func NewServerService(c *client.Client) *ServerService {
 	return &ServerService{client: c}
+}
+
+// Close 释放ServerService资源
+func (s *ServerService) Close() error {
+	if s.client == nil {
+		return nil
+	}
+	if err := s.client.Close(); err != nil {
+		return fmt.Errorf("ServerService Close failed: %w", err)
+	}
+	return nil
 }

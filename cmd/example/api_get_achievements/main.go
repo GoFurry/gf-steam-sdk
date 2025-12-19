@@ -68,7 +68,7 @@ func main() {
 	lang := "zh" // 中文返回成就名称/描述
 
 	steamLog.Infof("查询 SteamID: %s 游戏 %d(%s) 的成就信息", steamID, appID, lang)
-	achievements, err := sdk.Stats.GetPlayerAchievements(steamID, appID, lang)
+	achievements, err := sdk.Develop.GetPlayerAchievements(steamID, appID, lang)
 	if err != nil {
 		steamLog.Fatalf("获取成就信息失败: %v", err)
 	}

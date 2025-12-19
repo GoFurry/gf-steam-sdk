@@ -63,7 +63,7 @@ func main() {
 
 	// 调用API获取用户已拥有游戏信息
 	// Call API to get user's owned games info
-	games, err := sdk.Player.GetOwnedGames(steamID, true)
+	games, err := sdk.Develop.GetOwnedGames(steamID, true)
 	if err != nil {
 		log.Fatalf("获取已拥有游戏失败: %v", err)
 	}

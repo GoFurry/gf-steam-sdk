@@ -1,9 +1,4 @@
-// Package stats 提供 Steam 玩家统计数据相关 API 封装
-// 核心能力包括成就查询、游戏时长统计等, 支持原始字节流/结构化模型/精简模型多层级返回
-// Package stats provides API encapsulation for Steam player statistics
-// Core capabilities include achievement query, playtime statistics, supports multi-level return (raw bytes/structured model/simplified model)
-
-package stats
+package dev
 
 import (
 	"fmt"
@@ -31,7 +26,7 @@ const (
 // 返回值:
 //   - []byte: 原始API响应字节流 | Raw API response bytes
 //   - error: 请求/解析错误 | Request/parse error
-func (s *StatsService) GetPlayerAchievementsRawBytes(steamID string, appID uint64, lang string) (respBytes []byte, err error) {
+func (s *DevService) GetPlayerAchievementsRawBytes(steamID string, appID uint64, lang string) (respBytes []byte, err error) {
 	// 参数校验 | Parameter validation
 	if steamID == "" {
 		return respBytes, errors.ErrInvalidSteamID
@@ -77,7 +72,7 @@ func (s *StatsService) GetPlayerAchievementsRawBytes(steamID string, appID uint6
 // 返回值:
 //   - models.SteamPlayerAchievementsResponse: Steam原始响应结构体 | Steam raw response struct
 //   - error: 请求/解析错误 | Request/parse error
-func (s *StatsService) GetPlayerAchievementsRawModel(steamID string, appID uint64, lang string) (models.SteamPlayerAchievementsResponse, error) {
+func (s *DevService) GetPlayerAchievementsRawModel(steamID string, appID uint64, lang string) (models.SteamPlayerAchievementsResponse, error) {
 	// 获取原始字节流 | Get raw bytes
 	bytes, err := s.GetPlayerAchievementsRawBytes(steamID, appID, lang)
 	if err != nil {
@@ -110,7 +105,7 @@ func (s *StatsService) GetPlayerAchievementsRawModel(steamID string, appID uint6
 // 返回值:
 //   - []*models.PlayerAchievement: 精简成就信息列表 | Simplified achievement info list
 //   - error: 请求/解析错误 | Request/parse error
-func (s *StatsService) GetPlayerAchievementsBrief(steamID string, appID uint64, lang string) ([]*models.PlayerAchievement, error) {
+func (s *DevService) GetPlayerAchievementsBrief(steamID string, appID uint64, lang string) ([]models.PlayerAchievement, error) {
 	// 获取原始结构化模型 | Get raw structured model
 	rawStats, err := s.GetPlayerAchievementsRawModel(steamID, appID, lang)
 	if err != nil {
@@ -118,9 +113,9 @@ func (s *StatsService) GetPlayerAchievementsBrief(steamID string, appID uint64, 
 	}
 
 	// 转换为精简模型 | Convert to simplified model
-	achievements := make([]*models.PlayerAchievement, 0, len(rawStats.PlayerStats.Achievements))
+	achievements := make([]models.PlayerAchievement, 0, len(rawStats.PlayerStats.Achievements))
 	for _, a := range rawStats.PlayerStats.Achievements {
-		achievement := &models.PlayerAchievement{
+		achievement := models.PlayerAchievement{
 			SteamID:         rawStats.PlayerStats.SteamID,
 			GameName:        rawStats.PlayerStats.GameName,
 			AppID:           appID,
@@ -140,6 +135,6 @@ func (s *StatsService) GetPlayerAchievementsBrief(steamID string, appID uint64, 
 // 简化调用方式, 提供更直观的方法名
 // GetPlayerAchievements is the alias of simplified model interface
 // Simplifies calling with more intuitive method name
-func (s *StatsService) GetPlayerAchievements(steamID string, appID uint64, lang string) ([]*models.PlayerAchievement, error) {
+func (s *DevService) GetPlayerAchievements(steamID string, appID uint64, lang string) ([]models.PlayerAchievement, error) {
 	return s.GetPlayerAchievementsBrief(steamID, appID, lang)
 }

@@ -230,3 +230,12 @@ func (c *Client) DoRequest(method, baseURL string, params url.Values) (map[strin
 	}
 	return result, nil
 }
+
+// Close 释放Client资源
+func (c *Client) Close() error {
+	// 关闭HTTP客户端连接池
+	if c.client != nil {
+		c.client.CloseIdleConnections()
+	}
+	return nil
+}
