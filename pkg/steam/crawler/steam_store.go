@@ -23,7 +23,7 @@ func (s *CrawlerService) GetGameStoreRawHTML(appID uint64) ([]byte, error) {
 //   - appID: Game AppID
 //   - filename: Custom filename (auto-generate if empty)
 func (s *CrawlerService) SaveGameStoreRawHTML(appID uint64, filename string) (string, error) {
-	return s.SaveRawHTML(buildGameStoreURL(appID), "")
+	return s.SaveRawHTML(buildGameStoreURL(appID), filename)
 }
 
 // ============================ Tool 内部工具方法 ============================
