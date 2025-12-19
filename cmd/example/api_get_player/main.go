@@ -61,7 +61,7 @@ func main() {
 
 	// 调用玩家信息批量查询API(支持多个SteamID, 逗号分隔)
 	// Call batch player info query API (supports multiple SteamIDs separated by commas)
-	players, err := sdk.Player.GetPlayerSummaries("76561198370695025,76561198006409530")
+	players, err := sdk.Develop.GetPlayerSummaries("76561198370695025,76561198006409530")
 	if err != nil {
 		log.Fatal("[Main] 获取玩家信息失败: %v", err)
 	}

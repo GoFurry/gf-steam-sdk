@@ -1,0 +1,124 @@
+package dev
+
+import (
+	"fmt"
+	"net/url"
+
+	"github.com/GoFurry/gf-steam-sdk/pkg/models"
+	"github.com/GoFurry/gf-steam-sdk/pkg/util"
+	"github.com/GoFurry/gf-steam-sdk/pkg/util/errors"
+	"github.com/bytedance/sonic"
+)
+
+const (
+	ISteamUserStats = util.STEAM_API_BASE_URL + "ISteamUserStats"
+)
+
+// ============================ Structed Raw Model Raw Bytes 原始字节流接口 ============================
+
+// GetPlayerAchievementsRawBytes get player's game achievements 获取玩家单游戏成就
+//   - steamID: Player SteamID
+//   - appID: Game AppID
+//   - lang: Language (e.g. zh/en)
+func (s *DevService) GetPlayerAchievementsRawBytes(steamID string, appID uint64, lang string) (respBytes []byte, err error) {
+	// 参数校验 | Parameter validation
+	if steamID == "" {
+		return respBytes, errors.ErrInvalidSteamID
+	}
+	if appID == 0 {
+		return respBytes, errors.ErrInvalidAppID
+	}
+	// 默认语言 | Default language
+	if lang == "" {
+		lang = "en"
+	}
+
+	// 构建API请求参数 | Build API request parameters
+	params := url.Values{}
+	params.Set("steamid", steamID)
+	params.Set("appid", util.Uint642String(appID))
+	params.Set("l", lang) // 语言参数 | Language parameter
+
+	// 调用Client发送请求 | Call Client to send request (auto trigger retry/proxy/rate limit)
+	resp, err := s.client.DoRequest("GET", ISteamUserStats+"/GetPlayerAchievements/v1/", params)
+	if err != nil {
+		return respBytes, err
+	}
+
+	// 转换为字节流返回 | Convert to bytes and return
+	respBytes, err = sonic.Marshal(resp)
+	if err != nil {
+		return respBytes, fmt.Errorf("%w: marshal resp failed: %v", errors.ErrAPIResponse, err)
+	}
+
+	return respBytes, nil
+}
+
+// ============================ 结构化原始模型接口 ============================
+
+// GetPlayerAchievementsRawModel get player's game achievements 获取玩家单游戏成就
+//   - steamID: Player SteamID
+//   - appID: Game AppID
+//   - lang: Language (e.g. zh/en)
+func (s *DevService) GetPlayerAchievementsRawModel(steamID string, appID uint64, lang string) (models.SteamPlayerAchievementsResponse, error) {
+	// 获取原始字节流 | Get raw bytes
+	bytes, err := s.GetPlayerAchievementsRawBytes(steamID, appID, lang)
+	if err != nil {
+		return models.SteamPlayerAchievementsResponse{}, err
+	}
+
+	// 解析为原始结构体 | Unmarshal to raw struct
+	var statsResp models.SteamPlayerAchievementsResponse
+	if err = sonic.Unmarshal(bytes, &statsResp); err != nil {
+		return models.SteamPlayerAchievementsResponse{}, fmt.Errorf("%w: unmarshal achievements resp failed: %v", errors.ErrAPIResponse, err)
+	}
+
+	// 校验请求是否成功 | Validate request success (Steam API business status)
+	if !statsResp.PlayerStats.Success {
+		return models.SteamPlayerAchievementsResponse{}, errors.ErrAchievementFailed
+	}
+
+	return statsResp, nil
+}
+
+// ============================ Brief Model 精简模型接口 ============================
+
+// GetPlayerAchievementsBrief get player's game achievements 获取玩家单游戏成就
+//   - steamID: Player SteamID
+//   - appID: Game AppID
+//   - lang: Language (e.g. zh/en)
+func (s *DevService) GetPlayerAchievementsBrief(steamID string, appID uint64, lang string) ([]models.PlayerAchievement, error) {
+	// 获取原始结构化模型 | Get raw structured model
+	rawStats, err := s.GetPlayerAchievementsRawModel(steamID, appID, lang)
+	if err != nil {
+		return nil, err
+	}
+
+	// 转换为精简模型 | Convert to simplified model
+	achievements := make([]models.PlayerAchievement, 0, len(rawStats.PlayerStats.Achievements))
+	for _, a := range rawStats.PlayerStats.Achievements {
+		achievement := models.PlayerAchievement{
+			SteamID:         rawStats.PlayerStats.SteamID,
+			GameName:        rawStats.PlayerStats.GameName,
+			AppID:           appID,
+			AchievementAPI:  a.APIName,
+			AchievementName: a.Name,
+			Achieved:        a.Achieved == 1, // 布尔化成就状态 | Booleanize achievement status
+			UnlockTime:      a.UnlockTime,
+			UnlockTimeStr:   util.TimeUnix2String(a.UnlockTime), // 格式化解锁时间 | Format unlock time
+			Description:     a.Description,
+		}
+		achievements = append(achievements, achievement)
+	}
+	return achievements, nil
+}
+
+// ============================ Default Interface 默认接口 ============================
+
+// GetPlayerAchievements get player's game achievements 获取玩家单游戏成就
+//   - steamID: Player SteamID
+//   - appID: Game AppID
+//   - lang: Language (e.g. zh/en)
+func (s *DevService) GetPlayerAchievements(steamID string, appID uint64, lang string) ([]models.PlayerAchievement, error) {
+	return s.GetPlayerAchievementsBrief(steamID, appID, lang)
+}

@@ -8,6 +8,9 @@ package util
 import (
 	"errors"
 	"fmt"
+	"os"
+	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -123,4 +126,25 @@ func MaskAPIKey(apiKey string) string {
 	}
 
 	return fmt.Sprintf("********%s", apiKey[len(apiKey)-8:])
+}
+
+// OpenBrowser 跨平台打开指定URL的默认浏览
+func OpenBrowser(url string) {
+	var cmd *exec.Cmd
+
+	switch runtime.GOOS {
+	case "windows":
+		cmd = exec.Command("cmd", "/c", "start", url)
+	case "darwin":
+		cmd = exec.Command("open", url)
+	case "linux":
+		cmd = exec.Command("xdg-open", url)
+	default:
+		return
+	}
+
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Start()
+	return
 }

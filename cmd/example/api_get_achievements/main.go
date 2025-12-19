@@ -40,7 +40,8 @@ func main() {
 	// 初始化 sdk 的配置
 	// Initialize SDK configuration
 	cfg := steamConfig.NewDefaultConfig(). // 默认配置
-						WithAPIKey("********B6E87843EF78948D********"). // Steam API Key (自行获取)
+						WithAPIKey("********B6E87843EF78948D********"). // Steam API Key (长期有效)
+						WithAccessToken("eyAidHlwIjogIk**********").    // Steam AccessToken (仅24小时有效)
 						WithProxyURL("http://127.0.0.1:7897").          // 代理IP, 中国地区需要添加
 						WithProxyAuth("", "").                          // 代理认证信息, 账号, 密码
 						WithTimeout(5*time.Second).                     // 请求超时时间
@@ -67,7 +68,7 @@ func main() {
 	lang := "zh" // 中文返回成就名称/描述
 
 	steamLog.Infof("查询 SteamID: %s 游戏 %d(%s) 的成就信息", steamID, appID, lang)
-	achievements, err := sdk.Stats.GetPlayerAchievements(steamID, appID, lang)
+	achievements, err := sdk.Develop.GetPlayerAchievements(steamID, appID, lang)
 	if err != nil {
 		steamLog.Fatalf("获取成就信息失败: %v", err)
 	}

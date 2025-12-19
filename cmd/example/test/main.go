@@ -117,7 +117,7 @@ func Test_1_DefaultConfig() bool {
 	// 调用玩家信息查询接口
 	// Call player information query interface
 	log.Infof("调用GetPlayerSummaries接口, SteamID: %s", TestSteamID)
-	summaries, err := sdk.Player.GetPlayerSummaries(TestSteamID)
+	summaries, err := sdk.Develop.GetPlayerSummaries(TestSteamID)
 
 	// 结果处理
 	// Result processing
@@ -176,7 +176,7 @@ func Test_2_ValidConfig() bool {
 	// 调用玩家信息查询接口
 	// Call player information query interface
 	log.Infof("调用GetPlayerSummaries接口, SteamID: %s", TestSteamID)
-	summaries, err := sdk.Player.GetPlayerSummaries(TestSteamID)
+	summaries, err := sdk.Develop.GetPlayerSummaries(TestSteamID)
 
 	// 结果处理
 	// Result processing
@@ -262,7 +262,7 @@ func Test_3_RateLimit() bool {
 			// 记录单个请求开始时间
 			// Record the start time of a single request
 			reqStart := time.Now()
-			summaries, err := sdk.Player.GetPlayerSummaries(TestSteamID)
+			summaries, err := sdk.Develop.GetPlayerSummaries(TestSteamID)
 
 			// 单个请求结果处理
 			// Single request result processing

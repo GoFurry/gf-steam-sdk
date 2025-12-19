@@ -1,8 +1,6 @@
-// pkg/models/player_models.go
-
 package models
 
-// SteamPlayerResponse Steam 原始响应结构体 ISteamUser/GetPlayerSummaries
+// SteamPlayerResponse ISteamUser/GetPlayerSummaries
 type SteamPlayerResponse struct {
 	Response struct {
 		Players []struct {

@@ -38,13 +38,13 @@ func main() {
 	// 初始化 sdk 的配置
 	// Initialize SDK configuration
 	cfg := steamConfig.NewDefaultConfig(). // 默认配置
-		WithAPIKey("********B6E87843EF78948D********"). // Steam API Key
-		WithProxyURL("http://127.0.0.1:7897"). // 代理IP, 中国地区需要添加
-		WithProxyAuth("", ""). // 代理认证信息, 账号, 密码
-		WithTimeout(5*time.Second). // 请求超时时间
-		WithRetryTimes(2). // 失败重试次数
-		WithRateLimit(8.0, 15). // 限速
-		WithHeaders(map[string]string{ // 自定义请求头
+						WithAPIKey("********B6E87843EF78948D********"). // Steam API Key
+						WithProxyURL("http://127.0.0.1:7897").          // 代理IP, 中国地区需要添加
+						WithProxyAuth("", "").                          // 代理认证信息, 账号, 密码
+						WithTimeout(5*time.Second).                     // 请求超时时间
+						WithRetryTimes(2).                              // 失败重试次数
+						WithRateLimit(8.0, 15).                         // 限速
+						WithHeaders(map[string]string{                  // 自定义请求头
 			"Content-Type":    "application/json",
 			"User-Agent":      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
 			"Accept-Language": "zh-CN,zh",
@@ -63,7 +63,7 @@ func main() {
 
 	// 调用API获取用户已拥有游戏信息
 	// Call API to get user's owned games info
-	games, err := sdk.Game.GetOwnedGames(steamID, true)
+	games, err := sdk.Develop.GetOwnedGames(steamID, true)
 	if err != nil {
 		log.Fatalf("获取已拥有游戏失败: %v", err)
 	}

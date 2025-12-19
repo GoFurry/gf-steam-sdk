@@ -1,8 +1,6 @@
-// pkg/models/game_models.go
-
 package models
 
-// SteamOwnedGamesResponse Steam 原始响应结构体 IPlayerService/GetOwnedGames
+// SteamOwnedGamesResponse IPlayerService/GetOwnedGames
 type SteamOwnedGamesResponse struct {
 	Response struct {
 		GameCount int `json:"game_count"` // 游戏总数
