@@ -16,15 +16,9 @@ const (
 
 // ============================ Raw Bytes 原始字节流接口 ============================
 
-// GetOwnedGamesRawBytes 获取玩家已拥有游戏的原始字节流
-// 支持筛选免费游戏, 返回原始API响应字节流, 适用于自定义解析场景
-// 参数:
-//   - steamID: 玩家SteamID | Player SteamID
-//   - includeFree: 是否包含免费游戏 | Whether to include free games
-//
-// 返回值:
-//   - []byte: 原始API响应字节流 | Raw API response bytes
-//   - error: 请求/参数错误 | Request/parameter error
+// GetOwnedGamesRawBytes get player's owned games 获取玩家已拥有的游戏
+//   - steamID: Player SteamID
+//   - includeFree: Whether to include free games
 func (s *DevService) GetOwnedGamesRawBytes(steamID string, includeFree bool) (respBytes []byte, err error) {
 	// 参数校验 | Parameter validation
 	if steamID == "" {
@@ -55,15 +49,9 @@ func (s *DevService) GetOwnedGamesRawBytes(steamID string, includeFree bool) (re
 
 // ============================ Structed Raw Model 结构化原始模型接口 ============================
 
-// GetOwnedGamesRawModel 获取玩家已拥有游戏的结构化原始模型
-// 解析为Steam官方定义的原始结构体, 保留所有返回字段
-// 参数:
-//   - steamID: 玩家SteamID | Player SteamID
-//   - includeFree: 是否包含免费游戏 | Whether to include free games
-//
-// 返回值:
-//   - models.SteamOwnedGamesResponse: Steam原始响应结构体 | Steam raw response struct
-//   - error: 请求/解析错误 | Request/parse error
+// GetOwnedGamesRawModel get player's owned games 获取玩家已拥有的游戏
+//   - steamID: Player SteamID
+//   - includeFree: Whether to include free games
 func (s *DevService) GetOwnedGamesRawModel(steamID string, includeFree bool) (models.SteamOwnedGamesResponse, error) {
 	// 获取原始字节流 | Get raw bytes
 	bytes, err := s.GetOwnedGamesRawBytes(steamID, includeFree)
@@ -82,15 +70,9 @@ func (s *DevService) GetOwnedGamesRawModel(steamID string, includeFree bool) (mo
 
 // ============================ Brief Model 精简模型接口 ============================
 
-// GetOwnedGamesBrief 获取玩家已拥有游戏的精简模型
-// 转换为业务友好的精简结构体, 补充游戏图标/封面URL、格式化时间等易用性字段
-// 参数:
-//   - steamID: 玩家SteamID | Player SteamID
-//   - includeFree: 是否包含免费游戏 | Whether to include free games
-//
-// 返回值:
-//   - []*models.OwnedGame: 精简游戏信息列表 | Simplified game info list
-//   - error: 请求/解析错误 | Request/parse error
+// GetOwnedGamesBrief get player's owned games 获取玩家已拥有的游戏
+//   - steamID: Player SteamID
+//   - includeFree: Whether to include free games
 func (s *DevService) GetOwnedGamesBrief(steamID string, includeFree bool) ([]models.OwnedGame, error) {
 	// 获取原始结构化模型 | Get raw structured model
 	rawGames, err := s.GetOwnedGamesRawModel(steamID, includeFree)
@@ -121,10 +103,11 @@ func (s *DevService) GetOwnedGamesBrief(steamID string, includeFree bool) ([]mod
 	return games, nil
 }
 
-// GetOwnedGames 精简模型接口的别名
-// 简化调用方式, 提供更直观的方法名
-// GetOwnedGames is the alias of simplified model interface
-// Simplifies calling with more intuitive method name
+// ============================ Default Interface 默认接口 ============================
+
+// GetOwnedGames get player's owned games 获取玩家已拥有的游戏
+//   - steamID: Player SteamID
+//   - includeFree: Whether to include free games
 func (s *DevService) GetOwnedGames(steamID string, includeFree bool) ([]models.OwnedGame, error) {
 	return s.GetOwnedGamesBrief(steamID, includeFree)
 }

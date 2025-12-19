@@ -18,22 +18,16 @@ import (
 	"golang.org/x/time/rate"
 )
 
-// AntiCrawl 反爬策略管理器
-// 封装速率限制、随机请求头、延迟控制等反爬机制
-// AntiCrawl is the anti-crawl strategy manager
+// AntiCrawl is the anti-crawl strategy manager 反爬策略管理器
 // Encapsulates anti-crawl mechanisms such as rate limiting, random request headers, delay control
+// 封装速率限制、随机请求头、延迟控制等反爬机制
 type AntiCrawl struct {
 	cfg     *config.SteamConfig // 爬虫配置 | Crawler configuration
 	limiter *rate.Limiter       // 速率限制器 | Rate limiter
 	random  *rand.Rand          // 随机数生成器 | Random number generator
 }
 
-// NewAntiCrawl 创建反爬策略实例
-// 参数:
-//   - cfg: 爬虫配置实例 | Crawler configuration instance
-//
-// 返回值:
-//   - *AntiCrawl: 反爬策略实例 | Anti-crawl strategy instance
+// NewAntiCrawl creates anti-crawl strategy instance 创建反爬策略实例
 func NewAntiCrawl(cfg *config.SteamConfig) *AntiCrawl {
 	return &AntiCrawl{
 		cfg:     cfg,
@@ -42,9 +36,7 @@ func NewAntiCrawl(cfg *config.SteamConfig) *AntiCrawl {
 	}
 }
 
-// Apply 应用反爬策略到 Colly 采集器
-// 参数:
-//   - c: Colly 采集器实例 | Colly collector instance
+// Apply 应用反爬策略到 Colly 采集器 Apply anti-crawl rules to colly collector instance
 func (a *AntiCrawl) Apply(c *colly.Collector) {
 	// 配置全局速率限制规则
 	// Configure global rate limit rules

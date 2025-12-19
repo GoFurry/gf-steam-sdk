@@ -13,23 +13,9 @@ import (
 	"golang.org/x/time/rate"
 )
 
-// QueryServerInfo 查询单个服务器的基础信息(A2S_Info接口)
-// 每个请求独立创建A2S Client, 避免并发资源竞争, 保证线程安全
-// 参数:
-//   - addr: 服务器地址, 格式为"ip:port"
-//
-// 返回值:
-//   - a2s.ServerInfo: 服务器基础信息结构体
-//   - error: 错误信息, 包含Client创建失败/接口调用失败等场景
-//
-// QueryServerInfo queries the basic information of a single server (A2S_Info interface)
-// Each request creates an independent A2S Client to avoid concurrent resource competition and ensure thread safety
+// QueryServerInfo queries the basic information of a single server 查询单个服务器的基础信息
 // Parameters:
 //   - addr: Server address in the format of "ip:port"
-//
-// Return values:
-//   - a2s.ServerInfo: Server basic information structure
-//   - error: Error information, including Client creation failure/interface call failure and other scenarios
 func (s *ServerService) QueryServerInfo(addr string) (a2s.ServerInfo, error) {
 	// 创建独立的A2S Client(每个请求独立client, 避免并发冲突)
 	// Create independent A2S Client (each request has its own client to avoid concurrent conflicts)
@@ -49,23 +35,10 @@ func (s *ServerService) QueryServerInfo(addr string) (a2s.ServerInfo, error) {
 	return *info, nil
 }
 
-// QueryServerPlayers 查询单个服务器的玩家信息(A2S_Player接口)
-// 每个请求独立创建A2S Client, 避免并发资源竞争, 保证线程安全
-// 参数:
-//   - addr: 服务器地址, 格式为"ip:port"
-//
-// 返回值:
-//   - a2s.PlayerInfo: 服务器玩家信息结构体
-//   - error: 错误信息, 包含Client创建失败/接口调用失败等场景
-//
-// QueryServerPlayers queries the player information of a single server (A2S_Player interface)
+// QueryServerPlayers queries the player information of a single server 查询单个服务器的玩家信息
 // Each request creates an independent A2S Client to avoid concurrent resource competition and ensure thread safety
 // Parameters:
 //   - addr: Server address in the format of "ip:port"
-//
-// Return values:
-//   - a2s.PlayerInfo: Server player information structure
-//   - error: Error information, including Client creation failure/interface call failure and other scenarios
 func (s *ServerService) QueryServerPlayers(addr string) (a2s.PlayerInfo, error) {
 	// 创建独立的A2S Client(Create independent A2S Client)
 	client, err := a2s.NewClient(addr)
@@ -83,23 +56,10 @@ func (s *ServerService) QueryServerPlayers(addr string) (a2s.PlayerInfo, error) 
 	return *players, nil
 }
 
-// QueryServerRules 查询单个服务器的规则信息(A2S_Rules接口)
-// 每个请求独立创建A2S Client, 避免并发资源竞争, 保证线程安全
-// 参数:
-//   - addr: 服务器地址, 格式为"ip:port"
-//
-// 返回值:
-//   - a2s.RulesInfo: 服务器规则信息结构体
-//   - error: 错误信息, 包含Client创建失败/接口调用失败等场景
-//
-// QueryServerRules queries the rule information of a single server (A2S_Rules interface)
+// QueryServerRules queries the rule information of a single server 查询单个服务器的规则信息
 // Each request creates an independent A2S Client to avoid concurrent resource competition and ensure thread safety
 // Parameters:
 //   - addr: Server address in the format of "ip:port"
-//
-// Return values:
-//   - a2s.RulesInfo: Server rule information structure
-//   - error: Error information, including Client creation failure/interface call failure and other scenarios
 func (s *ServerService) QueryServerRules(addr string) (a2s.RulesInfo, error) {
 	// 创建独立的A2S Client(Create independent A2S Client)
 	client, err := a2s.NewClient(addr)
@@ -116,25 +76,10 @@ func (s *ServerService) QueryServerRules(addr string) (a2s.RulesInfo, error) {
 	return *rules, nil
 }
 
-// GetServerDetail 聚合获取单个服务器的完整信息(基础信息+玩家+规则)
-// 内部调用QueryServerInfo/QueryServerPlayers/QueryServerRules三个独立方法,
-// 非核心接口(玩家/规则)失败仅记录错误, 核心接口(基础信息)失败直接返回
-// 参数:
-//   - addr: 服务器地址, 格式为"ip:port"
-//
-// 返回值:
-//   - models.SteamServerResponse: 聚合后的服务器完整数据
-//   - error: 错误信息(任意子接口失败会返回错误, 但已获取的数据会保留)
-//
-// GetServerDetail aggregately gets the complete information of a single server (basic info + players + rules)
-// Internally calls three independent methods: QueryServerInfo/QueryServerPlayers/QueryServerRules,
-// non-core interfaces (players/rules) only record errors when failed, core interface (basic info) returns directly when failed
+// GetServerDetail aggregately gets the complete information of a single server (basic info + players + rules) 聚合获取单个服务器的完整信息
+// Internally calls three independent methods: QueryServerInfo/QueryServerPlayers/QueryServerRules
 // Parameters:
 //   - addr: Server address in the format of "ip:port"
-//
-// Return values:
-//   - models.SteamServerResponse: Aggregated complete server data
-//   - error: Error information (any sub-interface failure will return an error, but the obtained data will be retained)
 func (s *ServerService) GetServerDetail(addr string) (models.SteamServerResponse, error) {
 	var (
 		res   models.SteamServerResponse

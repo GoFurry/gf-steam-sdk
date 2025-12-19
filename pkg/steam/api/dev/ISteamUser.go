@@ -17,14 +17,8 @@ const (
 
 // ============================ Raw Bytes 原始字节流接口 ============================
 
-// GetPlayerSummariesRawBytes 获取玩家信息的原始字节流
-// 支持批量查询(最多100个SteamID), 返回原始API响应字节流, 适用于自定义解析场景
-// 参数:
-//   - steamIDs: 多个 SteamID 用逗号分隔(最多100个) | Multiple SteamIDs separated by commas (max 100)
-//
-// 返回值:
-//   - []byte: 原始API响应字节流 | Raw API response bytes
-//   - error: 请求/参数错误 | Request/parameter error
+// GetPlayerSummariesRawBytes get player's information 获取玩家信息
+//   - steamIDs: Multiple SteamIDs separated by commas (max 100)
 func (s *DevService) GetPlayerSummariesRawBytes(steamIDs string) (respBytes []byte, err error) {
 	// 参数校验 | Parameter validation
 	if steamIDs == "" {
@@ -57,14 +51,8 @@ func (s *DevService) GetPlayerSummariesRawBytes(steamIDs string) (respBytes []by
 
 // ============================ Structed Raw Model 结构化原始模型接口 ============================
 
-// GetPlayerSummariesRawModel 获取玩家信息的结构化原始模型
-// 解析为Steam官方定义的原始结构体, 保留所有返回字段
-// 参数:
-//   - steamIDs: 多个 SteamID 用逗号分隔 | Multiple SteamIDs separated by commas
-//
-// 返回值:
-//   - models.SteamPlayerResponse: Steam原始响应结构体 | Steam raw response struct
-//   - error: 请求/解析错误 | Request/parse error
+// GetPlayerSummariesRawModel get player's information 获取玩家信息
+//   - steamIDs: Multiple SteamIDs separated by commas (max 100)
 func (s *DevService) GetPlayerSummariesRawModel(steamIDs string) (models.SteamPlayerResponse, error) {
 	// 获取原始字节流 | Get raw bytes
 	bytes, err := s.GetPlayerSummariesRawBytes(steamIDs)
@@ -83,14 +71,8 @@ func (s *DevService) GetPlayerSummariesRawModel(steamIDs string) (models.SteamPl
 
 // ============================ Brief Model 精简模型接口 ============================
 
-// GetPlayerSummariesBrief 获取玩家信息的精简模型
-// 转换为业务友好的精简结构体, 补充格式化时间、在线状态布尔值等易用性字段
-// 参数:
-//   - steamIDs: 多个 SteamID 用逗号分隔 | Multiple SteamIDs separated by commas
-//
-// 返回值:
-//   - []*models.Player: 精简玩家信息列表 | Simplified player info list
-//   - error: 请求/解析错误 | Request/parse error
+// GetPlayerSummariesBrief get player's information 获取玩家信息
+//   - steamIDs: Multiple SteamIDs separated by commas (max 100)
 func (s *DevService) GetPlayerSummariesBrief(steamIDs string) ([]models.Player, error) {
 
 	// 获取原始结构化模型 | Get raw structured model
@@ -121,10 +103,10 @@ func (s *DevService) GetPlayerSummariesBrief(steamIDs string) ([]models.Player, 
 	return players, nil
 }
 
-// GetPlayerSummaries 精简模型接口的别名
-// 简化调用方式，提供更直观的方法名
-// GetPlayerSummaries is the alias of simplified model interface
-// Simplifies calling with more intuitive method name
+// ============================ Default Interface 默认接口 ============================
+
+// GetPlayerSummaries get player's information 获取玩家信息
+//   - steamIDs: Multiple SteamIDs separated by commas (max 100)
 func (s *DevService) GetPlayerSummaries(steamIDs string) ([]models.Player, error) {
 	return s.GetPlayerSummariesBrief(steamIDs)
 }

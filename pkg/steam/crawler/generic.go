@@ -13,14 +13,7 @@ import (
 
 // ============================ Raw HTML 通用获取原始 HTML ============================
 
-// GetRawHTML 爬取任意地址的原始 HTML (通用爬取, 无任何跳过验证的策略)
-// 自动应用反爬策略, 返回原始HTML字节流, 适用于自定义解析场景
-// 参数:
-//   - targetURL: 目标地址 | Target URL
-//
-// 返回值:
-//   - []byte: 原始 HTML 字节流 | Raw HTML bytes
-//   - error: 爬取/请求错误 | Crawling/request error
+// GetRawHTML crawl any address to get HTML 爬取任意地址的原始 HTML (通用爬取, 无任何跳过验证的策略)
 func (s *CrawlerService) GetRawHTML(targetURL string) ([]byte, error) {
 	// 参数校验 | Parameter validation
 	if targetURL == "" {
@@ -67,15 +60,9 @@ func (s *CrawlerService) GetRawHTML(targetURL string) ([]byte, error) {
 
 // ============================ Save HTML 通用保存原始 HTML ============================
 
-// SaveRawHTML 爬取任意 Steam 地址的原始 HTML 并保存到指定路径
-// 集成存储管理器，支持自动生成合法文件名，适配不同操作系统路径规则
-// 参数:
-//   - targetURL: 目标地址 | Target URL
-//   - filename: 自定义文件名(为空则自动生成) | Custom filename (auto-generate if empty)
-//
-// 返回值:
-//   - string: 完整存储路径 | Full storage path
-//   - error: 爬取/存储错误 | Crawling/storage error
+// SaveRawHTML crawl any address to save HTML
+//   - targetURL: Target URL
+//   - filename: Custom filename (auto-generate if empty)
 func (s *CrawlerService) SaveRawHTML(targetURL string, filename string) (string, error) {
 	if s.cfg.IsDebug {
 		fmt.Printf("[Info] Start GetRawHTML \n")
@@ -113,12 +100,7 @@ func (s *CrawlerService) SaveRawHTML(targetURL string, filename string) (string,
 
 // generateFilenameFromURL 基于URL自动生成合法文件名
 // 替换特殊字符、截断超长名称，兜底使用时间戳命名，适配跨平台存储规则
-// 示例: https://store.steampowered.com/app/550/ → store.steampowered.com_app_550.html
-// 参数:
-//   - targetURL: 目标URL | Target URL
-//
-// 返回值:
-//   - string: 合法文件名 | Valid filename
+// eg: https://store.steampowered.com/app/550/ → store.steampowered.com_app_550.html
 func generateFilenameFromURL(targetURL string) string {
 	parsedURL, err := url.Parse(targetURL)
 	if err != nil {

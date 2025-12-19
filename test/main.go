@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -32,6 +33,13 @@ func main() {
 	// 2.1 GetRecurringSubscriptionsCount v1 need:access_token
 	//count, err := sdk.Develop.GetSubscriptionBillCount(nil)
 	//fmt.Println(count)
+
+	// 3 ICommunityService
+	// 3.1 GetApps v1
+	apps, err := sdk.Develop.GetApps([]string{"993090", "550"})
+	for _, app := range apps {
+		fmt.Println(app)
+	}
 
 	// IPlayerService
 	// GetOwnedGames v1 need:key/access_token

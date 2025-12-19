@@ -12,9 +12,7 @@ import (
 	"github.com/GoFurry/gf-steam-sdk/internal/client"
 )
 
-// UtilService Steam 工具服务核心结构体
-// 主要用于辅助获取 Steam 接口调用所需的各类令牌和密钥
-// UtilService is the core structure of Steam utility service
+// UtilService is the core structure of Steam utility service 工具服务核心结构体
 // mainly used to assist in obtaining various tokens and keys required for Steam interface calls
 type UtilService struct {
 	client *client.Client // 内部通信客户端（Internal communication client）

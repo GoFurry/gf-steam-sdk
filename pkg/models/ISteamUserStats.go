@@ -1,6 +1,6 @@
 package models
 
-// SteamPlayerAchievementsResponse Steam 原始响应结构体 ISteamUserStats/GetPlayerAchievements
+// SteamPlayerAchievementsResponse ISteamUserStats/GetPlayerAchievements
 type SteamPlayerAchievementsResponse struct {
 	PlayerStats struct {
 		SteamID      string `json:"steamID"`  // 玩家SteamID

@@ -13,15 +13,12 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-// Parser HTML 解析器
-// 封装 goquery 解析逻辑, 提供通用的 HTML 解析和文本清理能力
-// Parser is the HTML parser
+// Parser is the HTML parser | HTML 解析器
 // Encapsulates goquery parsing logic and provides universal HTML parsing and text cleaning capabilities
+// 封装 goquery 解析逻辑, 提供通用的 HTML 解析和文本清理能力
 type Parser struct{}
 
-// NewParser 创建 HTML 解析器实例
-// 返回值:
-//   - *Parser: 解析器实例 | Parser instance
+// NewParser creates Parser instance | 创建 HTML 解析器实例
 func NewParser() *Parser {
 	return &Parser{}
 }

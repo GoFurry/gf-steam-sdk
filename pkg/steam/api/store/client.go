@@ -1,3 +1,6 @@
+// Package dev provides high-level encapsulation for Steam's store page APIs
+// Package dev 提供 Steam 商店页面 API 的上层封装
+
 package store
 
 import (
@@ -6,10 +9,12 @@ import (
 	"github.com/GoFurry/gf-steam-sdk/internal/client"
 )
 
+// StoreService Steam官方商店页面API核心结构体
 type StoreService struct {
 	client *client.Client
 }
 
+// NewStoreService 创建StoreService实例, 暴露初始化入口
 func NewStoreService(c *client.Client) *StoreService {
 	return &StoreService{client: c}
 }

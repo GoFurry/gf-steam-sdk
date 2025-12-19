@@ -1,5 +1,6 @@
 package models
 
+// SteamStoreTokenResponse Steam token model
 type SteamStoreTokenResponse struct {
 	Data struct {
 		WebapiToken string `json:"webapi_token"` // 成就唯一标识

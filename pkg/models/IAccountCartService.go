@@ -1,6 +1,6 @@
 package models
 
-// SteamUserCartResponse Steam 原始响应结构体 IPlayerService/GetOwnedGames
+// SteamUserCartResponse IPlayerService/GetOwnedGames
 type SteamUserCartResponse struct {
 	Response struct {
 		Cart struct {
@@ -32,17 +32,18 @@ type SteamUserCartResponse struct {
 
 // UserCart IPlayerService/GetOwnedGames 精简模型, 购物车信息
 type UserCart struct {
-	Items          []CartItems `json:"items"`
-	TotalPrice     string      `json:"total_price"`
-	FormattedTotal string      `json:"formatted_total"`
+	Items          []CartItem `json:"items"`           // 购物车物品
+	TotalPrice     string     `json:"total_price"`     // 总价
+	FormattedTotal string     `json:"formatted_total"` // 格式化的总价
 }
 
-type CartItems struct {
-	LineItemID     string `json:"line_item_id"`
-	PackageID      int    `json:"package_id"`
-	Price          string `json:"price"`
-	FormattedPrice string `json:"formatted_price"`
-	AddTime        string `json:"add_time"`
-	IsGift         bool   `json:"is_gift"`
-	IsPrivate      bool   `json:"is_private"`
+// CartItem Cart Item Model
+type CartItem struct {
+	LineItemID     string `json:"line_item_id"`    // 行内ID
+	PackageID      int    `json:"package_id"`      // 包裹ID
+	Price          string `json:"price"`           // 价格
+	FormattedPrice string `json:"formatted_price"` // 格式化的价格
+	AddTime        string `json:"add_time"`        // 加入购物车的时间
+	IsGift         bool   `json:"is_gift"`         // 是否为礼物
+	IsPrivate      bool   `json:"is_private"`      // 是否私有
 }

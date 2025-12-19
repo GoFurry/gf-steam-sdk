@@ -16,16 +16,10 @@ const (
 
 // ============================ Structed Raw Model Raw Bytes 原始字节流接口 ============================
 
-// GetPlayerAchievementsRawBytes 获取玩家单游戏成就的原始字节流
-// 适用于需要自定义解析、二次处理的场景, 保留API返回原始数据
-// 参数:
-//   - steamID: 玩家SteamID | Player SteamID
-//   - appID: 游戏ID | Game AppID
-//   - lang: 语言(比如zh/en) | Language (e.g. zh/en)
-//
-// 返回值:
-//   - []byte: 原始API响应字节流 | Raw API response bytes
-//   - error: 请求/解析错误 | Request/parse error
+// GetPlayerAchievementsRawBytes get player's game achievements 获取玩家单游戏成就
+//   - steamID: Player SteamID
+//   - appID: Game AppID
+//   - lang: Language (e.g. zh/en)
 func (s *DevService) GetPlayerAchievementsRawBytes(steamID string, appID uint64, lang string) (respBytes []byte, err error) {
 	// 参数校验 | Parameter validation
 	if steamID == "" {
@@ -62,16 +56,10 @@ func (s *DevService) GetPlayerAchievementsRawBytes(steamID string, appID uint64,
 
 // ============================ 结构化原始模型接口 ============================
 
-// GetPlayerAchievementsRawModel 获取玩家单游戏成就的结构化原始模型
-// 解析为Steam官方定义的原始结构体, 保留所有返回字段, 适用于全量数据场景
-// 参数:
-//   - steamID: 玩家SteamID | Player SteamID
-//   - appID: 游戏ID | Game AppID
-//   - lang: 语言 | Language
-//
-// 返回值:
-//   - models.SteamPlayerAchievementsResponse: Steam原始响应结构体 | Steam raw response struct
-//   - error: 请求/解析错误 | Request/parse error
+// GetPlayerAchievementsRawModel get player's game achievements 获取玩家单游戏成就
+//   - steamID: Player SteamID
+//   - appID: Game AppID
+//   - lang: Language (e.g. zh/en)
 func (s *DevService) GetPlayerAchievementsRawModel(steamID string, appID uint64, lang string) (models.SteamPlayerAchievementsResponse, error) {
 	// 获取原始字节流 | Get raw bytes
 	bytes, err := s.GetPlayerAchievementsRawBytes(steamID, appID, lang)
@@ -95,16 +83,10 @@ func (s *DevService) GetPlayerAchievementsRawModel(steamID string, appID uint64,
 
 // ============================ Brief Model 精简模型接口 ============================
 
-// GetPlayerAchievementsBrief 获取玩家单游戏成就的精简模型
-// 转换为业务友好的精简结构体, 剔除冗余字段, 补充格式化时间等易用性字段
-// 参数:
-//   - steamID: 玩家SteamID | Player SteamID
-//   - appID: 游戏ID | Game AppID
-//   - lang: 语言 | Language
-//
-// 返回值:
-//   - []*models.PlayerAchievement: 精简成就信息列表 | Simplified achievement info list
-//   - error: 请求/解析错误 | Request/parse error
+// GetPlayerAchievementsBrief get player's game achievements 获取玩家单游戏成就
+//   - steamID: Player SteamID
+//   - appID: Game AppID
+//   - lang: Language (e.g. zh/en)
 func (s *DevService) GetPlayerAchievementsBrief(steamID string, appID uint64, lang string) ([]models.PlayerAchievement, error) {
 	// 获取原始结构化模型 | Get raw structured model
 	rawStats, err := s.GetPlayerAchievementsRawModel(steamID, appID, lang)
@@ -131,10 +113,12 @@ func (s *DevService) GetPlayerAchievementsBrief(steamID string, appID uint64, la
 	return achievements, nil
 }
 
-// GetPlayerAchievements 精简模型接口的别名
-// 简化调用方式, 提供更直观的方法名
-// GetPlayerAchievements is the alias of simplified model interface
-// Simplifies calling with more intuitive method name
+// ============================ Default Interface 默认接口 ============================
+
+// GetPlayerAchievements get player's game achievements 获取玩家单游戏成就
+//   - steamID: Player SteamID
+//   - appID: Game AppID
+//   - lang: Language (e.g. zh/en)
 func (s *DevService) GetPlayerAchievements(steamID string, appID uint64, lang string) ([]models.PlayerAchievement, error) {
 	return s.GetPlayerAchievementsBrief(steamID, appID, lang)
 }

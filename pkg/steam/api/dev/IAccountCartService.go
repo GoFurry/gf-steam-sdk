@@ -17,8 +17,8 @@ const (
 // ============================ Raw Bytes 原始字节流接口 ============================
 
 // GetUserCartRawBytes requires access_token, return cart info from the access_token's owner.
-// If globally init access_token, you can use access_token = nil.
-// 返回 access_token 拥有者的购物车信息, 若 access_token 全局初始化则可填 nil.
+//   - countryCode changes price
+//   - accessToken is required, if globally initialized, use nil
 func (s *DevService) GetUserCartRawBytes(countryCode string, accessToken *string) (respBytes []byte, err error) {
 
 	params := url.Values{}
@@ -43,8 +43,8 @@ func (s *DevService) GetUserCartRawBytes(countryCode string, accessToken *string
 // ============================ Structed Raw Model 结构化原始模型接口 ============================
 
 // GetUserCartRawModel requires access_token, return cart info from the access_token's owner.
-// If globally init access_token, you can use access_token = nil.
-// 返回 access_token 拥有者的购物车信息, 若 access_token 全局初始化则可填 nil.
+//   - countryCode changes price
+//   - accessToken is required, if globally initialized, use nil
 func (s *DevService) GetUserCartRawModel(countryCode string, accessToken *string) (models.SteamUserCartResponse, error) {
 	bytes, err := s.GetUserCartRawBytes(countryCode, accessToken)
 	if err != nil {
@@ -62,17 +62,17 @@ func (s *DevService) GetUserCartRawModel(countryCode string, accessToken *string
 // ============================ Brief Model 精简模型接口 ============================
 
 // GetUserCartBrief requires access_token, return cart info from the access_token's owner.
-// If globally init access_token, you can use access_token = nil.
-// 返回 access_token 拥有者的购物车信息, 若 access_token 全局初始化则可填 nil.
+//   - countryCode changes price
+//   - accessToken is required, if globally initialized, use nil
 func (s *DevService) GetUserCartBrief(countryCode string, accessToken *string) (models.UserCart, error) {
 	rawCart, err := s.GetUserCartRawModel(countryCode, accessToken)
 	if err != nil {
 		return models.UserCart{}, err
 	}
 
-	items := make([]models.CartItems, 0, len(rawCart.Response.Cart.LineItems))
+	items := make([]models.CartItem, 0, len(rawCart.Response.Cart.LineItems))
 	for _, i := range rawCart.Response.Cart.LineItems {
-		item := models.CartItems{
+		item := models.CartItem{
 			LineItemID:     i.LineItemID,
 			PackageID:      i.PackageID,
 			Price:          i.PriceWhenAdded.AmountInCents,
@@ -94,15 +94,14 @@ func (s *DevService) GetUserCartBrief(countryCode string, accessToken *string) (
 // ============================ Default Interface 默认接口 ============================
 
 // GetUserCart requires access_token, return cart info from the access_token's owner.
-// If globally init access_token, you can use access_token = nil.
-// 返回 access_token 拥有者的购物车信息, 若 access_token 全局初始化则可填 nil.
+//   - countryCode changes price
+//   - accessToken is required, if globally initialized, use nil
 func (s *DevService) GetUserCart(countryCode string, accessToken *string) (models.UserCart, error) {
 	return s.GetUserCartBrief(countryCode, accessToken)
 }
 
 // DeleteUserCart requires access_token, clear all cart items from the access_token's owner.
-// If globally init access_token, you can use access_token = nil.
-// 清空 access_token 拥有者的购物车, 若 access_token 全局初始化则可填 nil.
+//   - accessToken is required, if globally initialized, use nil
 func (s *DevService) DeleteUserCart(accessToken *string) error {
 	params := url.Values{}
 	if accessToken != nil {
