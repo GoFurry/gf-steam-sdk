@@ -23,9 +23,10 @@ const (
 
 // Steam API 常量 | Steam API constants
 const (
-	STEAM_API_BASE_URL = "https://api.steampowered.com/"                                              // Steam API基础地址 | Steam API base URL
-	STEAM_ICON_URL     = "https://media.steampowered.com/steamcommunity/public/images/apps/%d/%s.jpg" // 游戏图标URL模板 | Game icon URL template
-	STEAM_CAPSULE_URL  = "https://cdn.akamai.steamstatic.com/steam/apps/%d/header.jpg"                // 游戏封面URL模板 | Game capsule URL template
+	STEAM_STORE_BASE_URL = "https://store.steampowered.com/"
+	STEAM_API_BASE_URL   = "https://api.steampowered.com/"                                              // Steam API基础地址 | Steam API base URL
+	STEAM_ICON_URL       = "https://media.steampowered.com/steamcommunity/public/images/apps/%d/%s.jpg" // 游戏图标URL模板 | Game icon URL template
+	STEAM_CAPSULE_URL    = "https://cdn.akamai.steamstatic.com/steam/apps/%d/header.jpg"                // 游戏封面URL模板 | Game capsule URL template
 )
 
 // 基础默认配置 | Basic default config

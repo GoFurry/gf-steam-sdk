@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
 	steamConfig "github.com/GoFurry/gf-steam-sdk/pkg/config"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam"
@@ -14,12 +15,23 @@ func main() {
 	cfg := steamConfig.NewDefaultConfig().
 		WithAccessToken(readAccessToken()).
 		WithAPIKey(readKey()).
-		WithProxyURL("http://127.0.0.1:7897")
+		WithProxyURL("http://127.0.0.1:7897").
+		WithTimeout(30 * time.Second)
 	sdk, err := steam.NewSteamSDK(cfg)
 	if err != nil {
 		log.Fatalf("[Main] 创建 Steam SDK 失败: %v", err)
 	}
 	defer sdk.Close()
+
+	// crawler
+	//html := []byte{}
+	//html, err = sdk.Crawler.GetHomePageRawHTML()
+	//html, err = sdk.Crawler.GetGameReviewRawHTML(550)
+	//html, err = sdk.Crawler.GetUpcomingPageRawHTML()
+	//html, err = sdk.Crawler.GetNewsRawHTML()
+	//html, err = sdk.Crawler.GetGameStoreRawHTML(550)
+	//html, err = sdk.Crawler.GetNewsPageRawHTML(103582791474415196, 541125441744799268)
+	//fmt.Println(string(html))
 
 	// 1 IAccountCartService
 	// 1.1 GetCart v1 required:access_token
