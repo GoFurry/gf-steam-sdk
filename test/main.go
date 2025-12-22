@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -75,14 +74,14 @@ func main() {
 	//	}
 	//}
 	// 4.5 GetSharedLibraryApps v1
-	sharedApps, err := sdk.Develop.GetSharedApps("1136785")
-	for _, a := range sharedApps.Apps {
-		cnt++
-		fmt.Println(a)
-		if cnt > 10 {
-			break
-		}
-	}
+	//sharedApps, err := sdk.Develop.GetSharedApps("1136785")
+	//for _, a := range sharedApps.Apps {
+	//	cnt++
+	//	fmt.Println(a)
+	//	if cnt > 10 {
+	//		break
+	//	}
+	//}
 
 	// IPlayerService
 	// GetOwnedGames v1 required:key/access_token

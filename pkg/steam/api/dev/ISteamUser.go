@@ -1,14 +1,14 @@
 package dev
 
 import (
-	"fmt"
 	"net/url"
 	"strings"
 
+	"github.com/GoFurry/gf-steam-sdk/internal/api"
+	"github.com/GoFurry/gf-steam-sdk/internal/client"
 	"github.com/GoFurry/gf-steam-sdk/pkg/models"
 	"github.com/GoFurry/gf-steam-sdk/pkg/util"
 	"github.com/GoFurry/gf-steam-sdk/pkg/util/errors"
-	"github.com/bytedance/sonic"
 )
 
 const (
@@ -30,23 +30,7 @@ func (s *DevService) GetPlayerSummariesRawBytes(steamIDs string) (respBytes []by
 			"steamids count exceeds 100 (Steam API maximum limit)", nil)
 	}
 
-	// 构建 API 请求参数 | Build API request parameters
-	params := url.Values{}
-	params.Set("steamids", steamIDs)
-
-	// 调用内部 Client 发送请求 | Call internal Client (auto apply proxy/rate limit/retry)
-	resp, err := s.client.DoRequest("GET", ISteamUser+"/GetPlayerSummaries/v2/", params)
-	if err != nil {
-		return respBytes, err
-	}
-
-	// 转换为字节流返回 | Convert to bytes and return
-	respBytes, err = sonic.Marshal(resp)
-	if err != nil {
-		return respBytes, fmt.Errorf("%w: marshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return respBytes, nil
+	return api.GetRawBytes(s.buildPlayerSummaries(steamIDs))
 }
 
 // ============================ Structed Raw Model 结构化原始模型接口 ============================
@@ -54,19 +38,17 @@ func (s *DevService) GetPlayerSummariesRawBytes(steamIDs string) (respBytes []by
 // GetPlayerSummariesRawModel get player's information 获取玩家信息
 //   - steamIDs: Multiple SteamIDs separated by commas (max 100)
 func (s *DevService) GetPlayerSummariesRawModel(steamIDs string) (models.SteamPlayerResponse, error) {
-	// 获取原始字节流 | Get raw bytes
-	bytes, err := s.GetPlayerSummariesRawBytes(steamIDs)
-	if err != nil {
-		return models.SteamPlayerResponse{}, err
+	// 参数校验 | Parameter validation
+	if steamIDs == "" {
+		return models.SteamPlayerResponse{}, errors.ErrInvalidSteamID
+	}
+	ids := strings.Split(steamIDs, ",")
+	if len(ids) > 100 {
+		return models.SteamPlayerResponse{}, errors.NewWithType(errors.ErrTypeParam,
+			"steamids count exceeds 100 (Steam API maximum limit)", nil)
 	}
 
-	// 解析为原始结构体 | Unmarshal to raw struct
-	var steamResp models.SteamPlayerResponse
-	if err = sonic.Unmarshal(bytes, &steamResp); err != nil {
-		return models.SteamPlayerResponse{}, fmt.Errorf("%w: unmarshal player resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return steamResp, nil
+	return api.GetRawModel[models.SteamPlayerResponse](s.buildPlayerSummaries(steamIDs))
 }
 
 // ============================ Brief Model 精简模型接口 ============================
@@ -109,4 +91,17 @@ func (s *DevService) GetPlayerSummariesBrief(steamIDs string) ([]models.Player, 
 //   - steamIDs: Multiple SteamIDs separated by commas (max 100)
 func (s *DevService) GetPlayerSummaries(steamIDs string) ([]models.Player, error) {
 	return s.GetPlayerSummariesBrief(steamIDs)
+}
+
+// ============================ Build 构造入参 ============================
+
+// buildPlayerSummaries builds input params.
+func (s *DevService) buildPlayerSummaries(steamIDs string) (
+	c *client.Client,
+	method, reqPath string,
+	params url.Values,
+) {
+	params = url.Values{}
+	params.Set("steamids", steamIDs)
+	return s.client, "GET", ISteamUser + "/GetPlayerSummaries/v2/", params
 }

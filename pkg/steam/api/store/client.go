@@ -29,3 +29,8 @@ func (s *StoreService) Close() error {
 	}
 	return nil
 }
+
+// Client 对外暴露 client
+func (s *StoreService) Client() *client.Client {
+	return s.client
+}

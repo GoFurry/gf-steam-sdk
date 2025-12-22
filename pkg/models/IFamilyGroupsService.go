@@ -57,12 +57,12 @@ type FamilyGroupMembershipHistory struct {
 // FamilyGroupForUserResponse IFamilyGroupsService/GetFamilyGroupForUser
 type FamilyGroupForUserResponse struct {
 	Response struct {
-		FamilyGroupID             string `json:"family_groupid"`               // 当前所属家庭组ID
-		IsNotMemberOfAnyGroup     bool   `json:"is_not_member_of_any_group"`   // 是否不属于任何家庭组
-		LatestTimeJoined          int64  `json:"latest_time_joined"`           // 最近一次加入家庭组的时间戳
-		LatestJoinedFamilyGroupID string `json:"latest_joined_family_groupid"` // 最近加入的家庭组ID
-		Role                      int    `json:"role"`                         // 当前用户在家庭组中的角色
-		CooldownSecondsRemaining  int64  `json:"cooldown_seconds_remaining"`   // 当前用户剩余冷却秒数
+		FamilyGroupID             string   `json:"family_groupid"`               // 当前所属家庭组ID
+		IsNotMemberOfAnyGroup     bool     `json:"is_not_member_of_any_group"`   // 是否不属于任何家庭组
+		LatestTimeJoined          int64    `json:"latest_time_joined"`           // 最近一次加入家庭组的时间戳
+		LatestJoinedFamilyGroupID string   `json:"latest_joined_family_groupid"` // 最近加入的家庭组ID
+		Role                      int      `json:"role"`                         // 当前用户在家庭组中的角色
+		CooldownSecondsRemaining  int64    `json:"cooldown_seconds_remaining"`   // 当前用户剩余冷却秒数
 		FamilyGroup               struct { // 所属家庭组的完整信息
 			Name                         string              `json:"name"`                            // 家庭组名称
 			Members                      []FamilyGroupMember `json:"members"`                         // 家庭组成员列表
@@ -70,7 +70,7 @@ type FamilyGroupForUserResponse struct {
 			Country                      string              `json:"country"`                         // 家庭组所属地区
 			SlotCooldownRemainingSeconds int64               `json:"slot_cooldown_remaining_seconds"` // 名额冷却剩余秒数
 			SlotCooldownOverrides        int                 `json:"slot_cooldown_overrides"`         // 名额冷却覆盖次数
-		} `json:"family_group"`                                                                             // 家庭组详情
+		} `json:"family_group"` // 家庭组详情
 		CanUndeleteLastJoinedFamily bool                           `json:"can_undelete_last_joined_family"` // 是否可恢复最近退出的家庭组
 		MembershipHistory           []FamilyGroupMembershipHistory `json:"membership_history"`              // 家庭组成员身份历史记录
 	} `json:"response"` // 接口响应主体

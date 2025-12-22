@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/GoFurry/gf-steam-sdk/internal/api"
+	"github.com/GoFurry/gf-steam-sdk/internal/client"
 	"github.com/GoFurry/gf-steam-sdk/pkg/models"
 	"github.com/GoFurry/gf-steam-sdk/pkg/util"
-	"github.com/GoFurry/gf-steam-sdk/pkg/util/errors"
-	"github.com/bytedance/sonic"
 )
 
 const (
@@ -18,177 +18,54 @@ const (
 
 // GetFamilyChangeLogRawBytes return family change log. 返回家庭组变更日志.
 func (s *DevService) GetFamilyChangeLogRawBytes(familyID string) (respBytes []byte, err error) {
-
-	params := url.Values{}
-	params.Set("family_groupid", familyID)
-
-	resp, err := s.client.DoRequest("GET", IFamilyGroupsService+"/GetChangeLog/v1/", params)
-	if err != nil {
-		return respBytes, err
-	}
-
-	respBytes, err = sonic.Marshal(resp)
-	if err != nil {
-		return respBytes, fmt.Errorf("%w: marshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return respBytes, nil
+	return api.GetRawBytes(s.buildFamilyChangeLog(familyID))
 }
 
 // GetFamilyMembersRawBytes return family info. 返回家庭组信息.
 func (s *DevService) GetFamilyMembersRawBytes(familyID string) (respBytes []byte, err error) {
-
-	params := url.Values{}
-	params.Set("family_groupid", familyID)
-
-	resp, err := s.client.DoRequest("GET", IFamilyGroupsService+"/GetFamilyGroup/v1/", params)
-	if err != nil {
-		return respBytes, err
-	}
-
-	respBytes, err = sonic.Marshal(resp)
-	if err != nil {
-		return respBytes, fmt.Errorf("%w: marshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return respBytes, nil
+	return api.GetRawBytes(s.buildFamilyMembers(familyID))
 }
 
 // GetFamilyGroupRawBytes return family group info by user. 返回当前access token用户的家庭组详细信息.
 func (s *DevService) GetFamilyGroupRawBytes(familyID string, included bool) (respBytes []byte, err error) {
-
-	params := url.Values{}
-	params.Set("family_groupid", familyID)
-	if included {
-		params.Set("include_family_group_response", "true")
-	}
-
-	resp, err := s.client.DoRequest("GET", IFamilyGroupsService+"/GetFamilyGroupForUser/v1/", params)
-	if err != nil {
-		return respBytes, err
-	}
-
-	respBytes, err = sonic.Marshal(resp)
-	if err != nil {
-		return respBytes, fmt.Errorf("%w: marshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return respBytes, nil
+	return api.GetRawBytes(s.buildFamilyGroup(familyID, included))
 }
 
 // GetFamilyPlaytimeRawBytes return family playtime. 返回家庭组游玩记录信息.
 func (s *DevService) GetFamilyPlaytimeRawBytes(familyID string) (respBytes []byte, err error) {
-
-	params := url.Values{}
-	params.Set("family_groupid", familyID)
-
-	resp, err := s.client.DoRequest("POST", IFamilyGroupsService+"/GetPlaytimeSummary/v1/", params)
-	if err != nil {
-		return respBytes, err
-	}
-
-	respBytes, err = sonic.Marshal(resp)
-	if err != nil {
-		return respBytes, fmt.Errorf("%w: marshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return respBytes, nil
+	return api.GetRawBytes(s.buildFamilyPlaytime(familyID))
 }
 
 // GetSharedAppsRawBytes return family shared apps. 返回家庭组共享的游戏.
 func (s *DevService) GetSharedAppsRawBytes(familyID string) (respBytes []byte, err error) {
-
-	params := url.Values{}
-	params.Set("family_groupid", familyID)
-
-	resp, err := s.client.DoRequest("GET", IFamilyGroupsService+"/GetSharedLibraryApps/v1/", params)
-	if err != nil {
-		return respBytes, err
-	}
-
-	respBytes, err = sonic.Marshal(resp)
-	if err != nil {
-		return respBytes, fmt.Errorf("%w: marshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return respBytes, nil
+	return api.GetRawBytes(s.buildSharedApps(familyID))
 }
 
 // ============================ Structed Raw Model 结构化原始模型接口 ============================
 
 // GetFamilyChangeLogRawModel return family change log. 返回家庭组变更日志.
 func (s *DevService) GetFamilyChangeLogRawModel(familyID string) (models.FamilyGroupChangeLogResponse, error) {
-	bytes, err := s.GetFamilyChangeLogRawBytes(familyID)
-	if err != nil {
-		return models.FamilyGroupChangeLogResponse{}, err
-	}
-
-	var logResp models.FamilyGroupChangeLogResponse
-	if err = sonic.Unmarshal(bytes, &logResp); err != nil {
-		return models.FamilyGroupChangeLogResponse{}, fmt.Errorf("%w: unmarshal log resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return logResp, nil
+	return api.GetRawModel[models.FamilyGroupChangeLogResponse](s.buildFamilyChangeLog(familyID))
 }
 
 // GetFamilyMembersRawModel return family info. 返回家庭组信息.
 func (s *DevService) GetFamilyMembersRawModel(familyID string) (models.FamilyGroupResponse, error) {
-	bytes, err := s.GetFamilyMembersRawBytes(familyID)
-	if err != nil {
-		return models.FamilyGroupResponse{}, err
-	}
-
-	var memberResp models.FamilyGroupResponse
-	if err = sonic.Unmarshal(bytes, &memberResp); err != nil {
-		return models.FamilyGroupResponse{}, fmt.Errorf("%w: unmarshal member resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return memberResp, nil
+	return api.GetRawModel[models.FamilyGroupResponse](s.buildFamilyMembers(familyID))
 }
 
 // GetFamilyGroupRawModel return family group info by user. 返回当前access token用户的家庭组详细信息.
 func (s *DevService) GetFamilyGroupRawModel(familyID string, included bool) (models.FamilyGroupForUserResponse, error) {
-	bytes, err := s.GetFamilyGroupRawBytes(familyID, included)
-	if err != nil {
-		return models.FamilyGroupForUserResponse{}, err
-	}
-
-	var memberResp models.FamilyGroupForUserResponse
-	if err = sonic.Unmarshal(bytes, &memberResp); err != nil {
-		return models.FamilyGroupForUserResponse{}, fmt.Errorf("%w: unmarshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return memberResp, nil
+	return api.GetRawModel[models.FamilyGroupForUserResponse](s.buildFamilyGroup(familyID, included))
 }
 
 // GetFamilyPlaytimeRawModel return family playtime. 返回家庭组游玩记录信息.
 func (s *DevService) GetFamilyPlaytimeRawModel(familyID string) (models.FamilyGroupPlaytimeSummaryResponse, error) {
-	bytes, err := s.GetFamilyPlaytimeRawBytes(familyID)
-	if err != nil {
-		return models.FamilyGroupPlaytimeSummaryResponse{}, err
-	}
-
-	var memberResp models.FamilyGroupPlaytimeSummaryResponse
-	if err = sonic.Unmarshal(bytes, &memberResp); err != nil {
-		return models.FamilyGroupPlaytimeSummaryResponse{}, fmt.Errorf("%w: unmarshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return memberResp, nil
+	return api.GetRawModel[models.FamilyGroupPlaytimeSummaryResponse](s.buildFamilyPlaytime(familyID))
 }
 
 // GetSharedAppsRawModel return family shared apps. 返回家庭组共享的游戏.
 func (s *DevService) GetSharedAppsRawModel(familyID string) (models.FamilySharedLibraryResponse, error) {
-	bytes, err := s.GetSharedAppsRawBytes(familyID)
-	if err != nil {
-		return models.FamilySharedLibraryResponse{}, err
-	}
-
-	var memberResp models.FamilySharedLibraryResponse
-	if err = sonic.Unmarshal(bytes, &memberResp); err != nil {
-		return models.FamilySharedLibraryResponse{}, fmt.Errorf("%w: unmarshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return memberResp, nil
+	return api.GetRawModel[models.FamilySharedLibraryResponse](s.buildSharedApps(familyID))
 }
 
 // ============================ Brief Model 精简模型接口 ============================
@@ -288,4 +165,64 @@ func (s *DevService) GetFamilyPlaytime(familyID string) ([]models.FamilyGroupPla
 // GetSharedApps return family shared apps. 返回家庭组共享的游戏.
 func (s *DevService) GetSharedApps(familyID string) (models.FamilySharedLibraryAppBrief, error) {
 	return s.GetSharedAppsBrief(familyID)
+}
+
+// ============================ Build 构造入参 ============================
+
+// buildFamilyChangeLog builds input params.
+func (s *DevService) buildFamilyChangeLog(familyID string) (
+	c *client.Client,
+	method, reqPath string,
+	params url.Values,
+) {
+	params = url.Values{}
+	params.Set("family_groupid", familyID)
+	return s.client, "GET", IFamilyGroupsService + "/GetChangeLog/v1/", params
+}
+
+// buildFamilyMembers builds input params.
+func (s *DevService) buildFamilyMembers(familyID string) (
+	c *client.Client,
+	method, reqPath string,
+	params url.Values,
+) {
+	params = url.Values{}
+	params.Set("family_groupid", familyID)
+	return s.client, "GET", IFamilyGroupsService + "/GetFamilyGroup/v1/", params
+}
+
+// buildFamilyGroup builds input params.
+func (s *DevService) buildFamilyGroup(familyID string, included bool) (
+	c *client.Client,
+	method, reqPath string,
+	params url.Values,
+) {
+	params = url.Values{}
+	params.Set("family_groupid", familyID)
+	if included {
+		params.Set("include_family_group_response", "true")
+	}
+	return s.client, "GET", IFamilyGroupsService + "/GetFamilyGroupForUser/v1/", params
+}
+
+// buildFamilyPlaytime builds input params.
+func (s *DevService) buildFamilyPlaytime(familyID string) (
+	c *client.Client,
+	method, reqPath string,
+	params url.Values,
+) {
+	params = url.Values{}
+	params.Set("family_groupid", familyID)
+	return s.client, "POST", IFamilyGroupsService + "/GetPlaytimeSummary/v1/", params
+}
+
+// buildSharedApps builds input params.
+func (s *DevService) buildSharedApps(familyID string) (
+	c *client.Client,
+	method, reqPath string,
+	params url.Values,
+) {
+	params = url.Values{}
+	params.Set("family_groupid", familyID)
+	return s.client, "GET", IFamilyGroupsService + "/GetSharedLibraryApps/v1/", params
 }
