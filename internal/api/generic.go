@@ -11,8 +11,7 @@ import (
 	"github.com/bytedance/sonic"
 )
 
-// GetRawBytes 执行API请求并返回序列化后的字节数组
-// GetRawBytes executes an API request and returns the serialized byte array
+// GetRawBytes executes an API request and returns the serialized byte array 执行API请求并返回序列化后的字节数组
 //
 // 参数说明 (Parameters):
 //
@@ -45,8 +44,8 @@ func GetRawBytes(c *client.Client, method, url string, params url.Values) (respB
 	return respBytes, nil
 }
 
-// GetRawModel 通用API请求方法, 将响应数据反序列化为指定类型的结构体
 // GetRawModel is a generic API request method that deserializes response data into a struct of the specified type
+// 通用API请求方法, 将响应数据反序列化为指定类型的结构体
 //
 // 泛型参数 (Generic Parameters):
 //

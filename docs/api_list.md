@@ -1,3 +1,13 @@
+### 0 internal
+| API接口                                        | 参数                                                                              | 描述               |
+|----------------------------------------------|---------------------------------------------------------------------------------|------------------|
+| internal/api/GetRawBytes                     | `c *client.Client`<br/>`method string`<br/>`url string`<br/>`params url.Values` | HTTP请求原始字节数据     |
+| internal/api/GetRawModel                     | `c *client.Client`<br/>`method string`<br/>`url string`<br/>`params url.Values` | HTTP请求原始字节数据返回模型 |
+| internal/client/NewClient                    | `cfg *config.SteamConfig`                                                       | 创建工具包的客户端        |
+| internal/client/DoRequest                    | `method string`<br/>`baseURL string`<br/>`params url.Values`                    | 通用请求             |
+| IFamilyGroupsService/GetSharedLibraryApps/v1 | `access token`                                                                  | 获取家庭组共享的游戏       |
+
+
 ### 1 develop 
 api.steampowered.com
 
@@ -96,25 +106,35 @@ store.steampowered.com
 
 ### 3 crawler
 
-| 爬取地址                                        | 封装接口                              | 描述                |
-|---------------------------------------------|-----------------------------------|-------------------|
-| any                                         | sdk.Crawler.GetGameStoreRawHTML   | 爬取任意地址的原始 HTML    |
-| any                                         | sdk.Crawler.SaveGameStoreRawHTML  | 爬取并保存任意地址的原始 HTML |
-| `https://store.steampowered.com/app/appid`  | sdk.Crawler.GetGameStoreRawHTML   | 获取游戏详情页原始 HTML    |
-| `https://store.steampowered.com/app/appid`  | sdk.Crawler.SaveGameStoreRawHTML  | 保存游戏详情页原始 HTML    |
+| 爬取地址                                                                    | 封装接口                                | 描述                 |
+|-------------------------------------------------------------------------|-------------------------------------|--------------------|
+| any                                                                     | sdk.Crawler.GetGameStoreRawHTML     | 爬取任意地址的原始 HTML     |
+| any                                                                     | sdk.Crawler.SaveGameStoreRawHTML    | 爬取并保存任意地址的原始 HTML  |
+| `https://store.steampowered.com/app/{$appid}`                           | sdk.Crawler.GetGameStoreRawHTML     | 获取游戏详情页原始 HTML     |
+| `https://store.steampowered.com/app/{$appid}`                           | sdk.Crawler.SaveGameStoreRawHTML    | 保存游戏详情页原始 HTML     |
+| `https://store.steampowered.com/`                                       | sdk.Crawler.GetHomePageRawHTML      | 获取 Steam 首页原始 HTML |
+| `https://store.steampowered.com/`                                       | sdk.Crawler.SaveHomePageRawHTML     | 保存 Steam 首页原始 HTML |
+| `https://store.steampowered.com/{$appid}/reviews/`                      | sdk.Crawler.GetGameReviewRawHTML    | 获取游戏评论页原始 HTML     |
+| `https://store.steampowered.com/{$appid}/reviews/`                      | sdk.Crawler.SaveGameReviewRawHTML   | 保存游戏评论页原始 HTML     |
+| `https://store.steampowered.com/explore/upcoming`                       | sdk.Crawler.GetUpcomingPageRawHTML  | 获取即将推出推荐页原始 HTML   |
+| `https://store.steampowered.com/explore/upcoming`                       | sdk.Crawler.SaveUpcomingPageRawHTML | 保存即将推出推荐页原始 HTML   |
+| `https://store.steampowered.com/explore/new`                            | sdk.Crawler.GetNewsRawHTML          | 获取新闻推荐页原始 HTML     |
+| `https://store.steampowered.com/explore/new`                            | sdk.Crawler.SaveNewsRawHTML         | 保存新闻推荐页原始 HTML     |
+| `https://store.steampowered.com/news/?emclan={$emclan}&emgid={$emgid}`  | sdk.Crawler.GetNewsPageRawHTML      | 获取新闻页原始 HTML       |
+| `https://store.steampowered.com/news/?emclan={$emclan}&emgid={$emgid}`  | sdk.Crawler.SaveNewsPageRawHTML     | 保存新闻页原始 HTML       |
 
 #### 3.1 Generic
 3.1.1 GetRawHTML <br/>
 Crawl any address to get HTML <br/>
 爬取任意地址的原始 HTML (通用爬取, 无任何跳过验证的策略) <br/>
 ```go
-htmlBytes, err := sdk.Crawler.GetGameStoreRawHTML(appID)
+htmlBytes, err := sdk.Crawler.GetRawHTML(url)
 ```
 3.1.2 SaveRawHTML <br/>
 Crawl any address to save HTML <br/>
 爬取并保存任意地址的原始 HTML (通用爬取, 无任何跳过验证的策略) <br/>
 ```go
-savePath, err := sdk.Crawler.SaveGameStoreRawHTML(550, "")
+savePath, err := sdk.Crawler.SaveRawHTML(url, path)
 ```
 #### 3.2 Game Page
 3.2.1 GetGameStoreRawHTML <br/>
@@ -127,7 +147,67 @@ htmlBytes, err := sdk.Crawler.GetGameStoreRawHTML(appID)
 Save game page raw HTML <br/>
 保存游戏详情页原始 HTML <br/>
 ```go
-savePath, err := sdk.Crawler.SaveGameStoreRawHTML(550, "")
+savePath, err := sdk.Crawler.SaveGameStoreRawHTML(appID, path)
+```
+3.2.3 GetHomePageRawHTML <br/>
+Get home page raw HTML  <br/>
+获取 Steam 首页原始 HTML <br/>
+```go
+htmlBytes, err := sdk.Crawler.GetHomePageRawHTML()
+```
+3.2.4 SaveHomePageRawHTML <br/>
+Save home page raw HTML  <br/>
+保存 Steam 首页原始 HTML <br/>
+```go
+savePath, err := sdk.Crawler.SaveHomePageRawHTML(path)
+```
+3.2.5 GetGameReviewRawHTML <br/>
+Get app review page raw HTML<br/>
+获取游戏评论页原始 HTML <br/>
+```go
+htmlBytes, err := sdk.Crawler.GetGameReviewRawHTML(appID)
+```
+3.2.6 SaveGameReviewRawHTML <br/>
+Save home page raw HTML <br/>
+保存游戏详情页原始 HTML <br/>
+```go
+savePath, err := sdk.Crawler.SaveGameReviewRawHTML(appID, path)
+```
+3.2.7 GetUpcomingPageRawHTML <br/>
+Get app upcoming page raw HTML <br/>
+获取即将推出推荐页原始 HTML <br/>
+```go
+htmlBytes, err := sdk.Crawler.GetUpcomingPageRawHTML()
+```
+3.2.8 SaveUpcomingPageRawHTML <br/>
+Save app upcoming page raw HTML <br/>
+保存即将推出推荐页原始 HTML <br/>
+```go
+savePath, err := sdk.Crawler.GetUpcomingPageRawHTML(path)
+```
+3.2.9 GetNewsRawHTML <br/>
+Get app news page raw HTML <br/>
+获取新闻推荐页原始 HTML <br/>
+```go
+htmlBytes, err := sdk.Crawler.GetNewsRawHTML()
+```
+3.2.10 SaveNewsRawHTML <br/>
+Save app news page raw HTML <br/>
+保存新闻推荐页原始 HTML <br/>
+```go
+savePath, err := sdk.Crawler.SaveNewsRawHTML(path)
+```
+3.2.1 GetNewsPageRawHTML <br/>
+Get app news page raw HTML <br/>
+获取新闻页原始 HTML <br/>
+```go
+htmlBytes, err := sdk.Crawler.GetNewsPageRawHTML(emclan, emgid)
+```
+3.2.2 SaveNewsPageRawHTML <br/>
+Save app news page raw HTML <br/>
+保存新闻推荐页原始 HTML <br/>
+```go
+savePath, err := sdk.Crawler.SaveNewsPageRawHTML(emclan, emgid, path)
 ```
 
 
@@ -216,6 +296,7 @@ detailList, detailErrs, err := sdk.Server.GetServerDetailList(addrs, TestQPS, Te
 | sdk.Util.GetStoreToken     | 打开浏览器获取 Steam 商店令牌        |
 | sdk.Util.GetCommunityToken | 打开浏览器获取 Steam 社区令牌        |
 | sdk.Util.GetAPIKey         | 打开浏览器获取 Steam 开发者 API Key |
+| sdk.Util.ParseBBCode       | BBCode 解析为 HTML           |
 
 
 #### 5.1 Key
@@ -236,4 +317,10 @@ Open your browser to get the Steam developer API Key <br/>
 打开浏览器获取 Steam 开发者 API Key <br/>
 ```go
 sdk.Util.GetAPIKey()
+```
+5.1.4 ParseBBCode <br/>
+ParseBBCode recursively parses Steam custom BBCode into HTML string <br/>
+将 Steam 自定义 BBCode 递归解析为 HTML 字符串 <br/>
+```go
+sdk.Util.ParseBBCode(text, limitNumber)
 ```
