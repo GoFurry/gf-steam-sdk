@@ -50,7 +50,6 @@ count, err := sdk.Develop.GetSubscriptionBillCount(nil)
 1.3.1 GetApps/v1 <br/>
 Get app brief information <br/> 
 获取入参对应的商品的简略信息 <br/>
-Required: `access token`
 ```go
 apps, err := sdk.Develop.GetApps([]string{"993090", "550"})
 ```
@@ -89,6 +88,26 @@ Get family shared apps <br/>
 Required: `access token`
 ```go
 sdk.Develop.GetSharedApps("1136785")
+```
+#### 1.5 ILoyaltyRewardsService
+1.5.1 GetEquippedProfileItems/v1 <br/>
+Get user equipped profile items <br/>
+获取用户装备的背景图 <br/>
+```go
+sdk.Develop.GetEquippedProfileItems("76561198370695025", "zh")
+```
+1.5.2 GetReactionsSummaryForUser/v1 <br/>
+Get user reactions about point item <br/>
+获取用户收到或赠送点数物品的记录 <br/>
+```go
+sdk.Develop.GetReactionsSummaryForUser("76561198370695025")
+```
+1.5.3 GetSummary/v1 <br/>
+Get user points summary <br/>
+获取access token所属用户的点数 <br/>
+Required: `access token`
+```go
+sdk.Develop.GetLoyaltyRewardsSummary("76561198370695025")
 ```
 
 ---
