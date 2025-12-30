@@ -13,8 +13,8 @@ var cnt = 0
 
 func main() {
 	cfg := steamConfig.NewDefaultConfig().
-		WithAccessToken(readAccessToken()).
-		WithAPIKey(readKey()).
+		//WithAccessToken(readAccessToken()).
+		//WithAPIKey(readKey()).
 		WithProxyURL("http://127.0.0.1:7897").
 		WithTimeout(30 * time.Second)
 	sdk, err := steam.NewSteamSDK(cfg)
@@ -94,6 +94,24 @@ func main() {
 	//		break
 	//	}
 	//}
+
+	// 5 ILoyaltyRewardsService
+	// 5.1 GetEquippedProfileItems v1
+	//items, err := sdk.Develop.GetEquippedProfileItems("76561198370695025", nil)
+	//cnt = 0
+	//for _, item := range items {
+	//	cnt++
+	//	fmt.Println(item)
+	//	if cnt > 10 {
+	//		break
+	//	}
+	//}
+	//// 5.2 GetReactionsSummaryForUser v1
+	//reactions, err := sdk.Develop.GetReactionsSummaryForUser("76561198370695025")
+	//fmt.Println(reactions)
+	// 5.3 GetReactionsSummaryForUser v1
+	//reactions, err := sdk.Develop.GetLoyaltyRewardsSummary("76561198370695025")
+	//fmt.Println(reactions)
 
 	// IPlayerService
 	// GetOwnedGames v1 required:key/access_token
