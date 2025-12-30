@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
+	"time"
 
 	steamConfig "github.com/GoFurry/gf-steam-sdk/pkg/config"
 	"github.com/GoFurry/gf-steam-sdk/pkg/steam"
@@ -13,14 +13,25 @@ var cnt = 0
 
 func main() {
 	cfg := steamConfig.NewDefaultConfig().
-		WithAccessToken(readAccessToken()).
-		WithAPIKey(readKey()).
-		WithProxyURL("http://127.0.0.1:7897")
+		//WithAccessToken(readAccessToken()).
+		//WithAPIKey(readKey()).
+		WithProxyURL("http://127.0.0.1:7897").
+		WithTimeout(30 * time.Second)
 	sdk, err := steam.NewSteamSDK(cfg)
 	if err != nil {
 		log.Fatalf("[Main] 创建 Steam SDK 失败: %v", err)
 	}
 	defer sdk.Close()
+
+	// crawler
+	//html := []byte{}
+	//html, err = sdk.Crawler.GetHomePageRawHTML()
+	//html, err = sdk.Crawler.GetGameReviewRawHTML(550)
+	//html, err = sdk.Crawler.GetUpcomingPageRawHTML()
+	//html, err = sdk.Crawler.GetNewsRawHTML()
+	//html, err = sdk.Crawler.GetGameStoreRawHTML(550)
+	//html, err = sdk.Crawler.GetNewsPageRawHTML(103582791474415196, 541125441744799268)
+	//fmt.Println(string(html))
 
 	// 1 IAccountCartService
 	// 1.1 GetCart v1 required:access_token
@@ -36,10 +47,71 @@ func main() {
 
 	// 3 ICommunityService
 	// 3.1 GetApps v1
-	apps, err := sdk.Develop.GetApps([]string{"993090", "550"})
-	for _, app := range apps {
-		fmt.Println(app)
-	}
+	//apps, err := sdk.Develop.GetApps([]string{"993090", "550"})
+	//for _, app := range apps {
+	//	fmt.Println(app)
+	//}
+
+	// 4 IFamilyGroupsService
+	// 4.1 GetChangeLog v1
+	//changeLogs, err := sdk.Develop.GetFamilyChangeLog("1136785")
+	//cnt = 0
+	//for _, clog := range changeLogs {
+	//	cnt++
+	//	fmt.Println(clog)
+	//	if cnt > 10 {
+	//		break
+	//	}
+	//}
+	// 4.2 GetFamilyGroup v1
+	//family, err := sdk.Develop.GetFamilyMembers("1136785")
+	//cnt = 0
+	//for _, member := range family.Members {
+	//	cnt++
+	//	fmt.Println(member)
+	//	if cnt > 10 {
+	//		break
+	//	}
+	//}
+	// 4.3 GetFamilyGroupForUser v1
+	//familyGroup, err := sdk.Develop.GetFamilyGroup("1136785", false)
+	//fmt.Println(familyGroup)
+	// 4.4 GetPlaytimeSummary v1
+	//playtime, err := sdk.Develop.GetFamilyPlaytime("1136785")
+	//for _, p := range playtime {
+	//	cnt++
+	//	fmt.Println(p)
+	//	if cnt > 10 {
+	//		break
+	//	}
+	//}
+	// 4.5 GetSharedLibraryApps v1
+	//sharedApps, err := sdk.Develop.GetSharedApps("1136785")
+	//for _, a := range sharedApps.Apps {
+	//	cnt++
+	//	fmt.Println(a)
+	//	if cnt > 10 {
+	//		break
+	//	}
+	//}
+
+	// 5 ILoyaltyRewardsService
+	// 5.1 GetEquippedProfileItems v1
+	//items, err := sdk.Develop.GetEquippedProfileItems("76561198370695025", nil)
+	//cnt = 0
+	//for _, item := range items {
+	//	cnt++
+	//	fmt.Println(item)
+	//	if cnt > 10 {
+	//		break
+	//	}
+	//}
+	//// 5.2 GetReactionsSummaryForUser v1
+	//reactions, err := sdk.Develop.GetReactionsSummaryForUser("76561198370695025")
+	//fmt.Println(reactions)
+	// 5.3 GetReactionsSummaryForUser v1
+	//reactions, err := sdk.Develop.GetLoyaltyRewardsSummary("76561198370695025")
+	//fmt.Println(reactions)
 
 	// IPlayerService
 	// GetOwnedGames v1 required:key/access_token

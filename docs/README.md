@@ -32,13 +32,13 @@ A lightweight, modular Go SDK for the Steam Open Platform, providing Steam WebAP
 - 异步爬取 + 最大深度限制: 提升效率同时防止无限递归
 
 ### 5. 完整功能覆盖 | Comprehensive Features
-| 模块      | 核心能力                         | 接口示例                                                                                                               |
-|---------|------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| Develop | 封装 api.steampowered.com 的 API           | `()`                                                                                                               |
-| Store   | 封装 store.steampowered.com 的 API              | `()`                                                                         |
-| Util    | 接入 SteamAPI 可能用到的工具方法        | `()`                                                                      |
-| Crawler | Steam 商店页爬取、HTML 存储、自定义爬取    | `GetGameStoreRawHTML(550)`<br/>`SaveGameStoreRawHTML(550, "/storage/")`                                            |
-| Server  | A2S 服务器信息查询(基础/玩家/规则)、批量限流重试 | `GetServerDetail("110.42.54.147:52023")`<br/>`GetServerDetailList([]string{"ip:port"}, 2.0, 5, 30*time.Second, 3)` |
+| 模块      | 核心能力                            | 接口示例                                                                                                               |
+|---------|---------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| Develop | 封装 api.steampowered.com 的 API   | `()`                                                                                                               |
+| Store   | 封装 store.steampowered.com 的 API | `()`                                                                         |
+| Util    | 接入 SteamAPI 可能用到的工具方法           | `()`                                                                      |
+| Crawler | Steam 商店页爬取、HTML 存储、自定义爬取       | `GetGameStoreRawHTML(550)`<br/>`SaveGameStoreRawHTML(550, "/storage/")`                                            |
+| Server  | A2S 服务器信息查询(基础/玩家/规则)、批量限流重试    | `GetServerDetail("110.42.54.147:52023")`<br/>`GetServerDetailList([]string{"ip:port"}, 2.0, 5, 30*time.Second, 3)` |
 
 ### 6. 高可用性设计 | High Availability
 - 完善的错误体系: 自定义错误类型(参数错误/API 错误/爬虫错误), 便于问题定位

@@ -1,13 +1,12 @@
 package dev
 
 import (
-	"fmt"
 	"net/url"
 
+	"github.com/GoFurry/gf-steam-sdk/internal/api"
+	"github.com/GoFurry/gf-steam-sdk/internal/client"
 	"github.com/GoFurry/gf-steam-sdk/pkg/models"
 	"github.com/GoFurry/gf-steam-sdk/pkg/util"
-	"github.com/GoFurry/gf-steam-sdk/pkg/util/errors"
-	"github.com/bytedance/sonic"
 )
 
 const (
@@ -17,53 +16,20 @@ const (
 // ============================ Raw Bytes 原始字节流接口 ============================
 
 // GetUserCartRawBytes requires access_token, return cart info from the access_token's owner.
-//   - countryCode changes price
-//   - accessToken is required, if globally initialized, use nil
 func (s *DevService) GetUserCartRawBytes(countryCode string, accessToken *string) (respBytes []byte, err error) {
-
-	params := url.Values{}
-	params.Set("user_country", countryCode)
-	if accessToken != nil {
-		params.Set("access_token", *accessToken)
-	}
-
-	resp, err := s.client.DoRequest("GET", IAccountCartService+"/GetCart/v1/", params)
-	if err != nil {
-		return respBytes, err
-	}
-
-	respBytes, err = sonic.Marshal(resp)
-	if err != nil {
-		return respBytes, fmt.Errorf("%w: marshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return respBytes, nil
+	return api.GetRawBytes(s.buildUserCart(countryCode, accessToken))
 }
 
 // ============================ Structed Raw Model 结构化原始模型接口 ============================
 
 // GetUserCartRawModel requires access_token, return cart info from the access_token's owner.
-//   - countryCode changes price
-//   - accessToken is required, if globally initialized, use nil
 func (s *DevService) GetUserCartRawModel(countryCode string, accessToken *string) (models.SteamUserCartResponse, error) {
-	bytes, err := s.GetUserCartRawBytes(countryCode, accessToken)
-	if err != nil {
-		return models.SteamUserCartResponse{}, err
-	}
-
-	var cartResp models.SteamUserCartResponse
-	if err = sonic.Unmarshal(bytes, &cartResp); err != nil {
-		return models.SteamUserCartResponse{}, fmt.Errorf("%w: unmarshal cart resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return cartResp, nil
+	return api.GetRawModel[models.SteamUserCartResponse](s.buildUserCart(countryCode, accessToken))
 }
 
 // ============================ Brief Model 精简模型接口 ============================
 
 // GetUserCartBrief requires access_token, return cart info from the access_token's owner.
-//   - countryCode changes price
-//   - accessToken is required, if globally initialized, use nil
 func (s *DevService) GetUserCartBrief(countryCode string, accessToken *string) (models.UserCart, error) {
 	rawCart, err := s.GetUserCartRawModel(countryCode, accessToken)
 	if err != nil {
@@ -109,4 +75,20 @@ func (s *DevService) DeleteUserCart(accessToken *string) error {
 	}
 	_, err := s.client.DoRequest("POST", IAccountCartService+"/DeleteCart/v1/", params)
 	return err
+}
+
+// ============================ Build 构造入参 ============================
+
+// buildUserCart builds input params.
+func (s *DevService) buildUserCart(countryCode string, accessToken *string) (
+	c *client.Client,
+	method, reqPath string,
+	params url.Values,
+) {
+	params = url.Values{}
+	params.Set("user_country", countryCode)
+	if accessToken != nil {
+		params.Set("access_token", *accessToken)
+	}
+	return s.client, "GET", IAccountCartService + "/GetCart/v1/", params
 }

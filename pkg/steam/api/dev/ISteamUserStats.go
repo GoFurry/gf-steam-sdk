@@ -1,13 +1,12 @@
 package dev
 
 import (
-	"fmt"
 	"net/url"
 
+	"github.com/GoFurry/gf-steam-sdk/internal/api"
+	"github.com/GoFurry/gf-steam-sdk/internal/client"
 	"github.com/GoFurry/gf-steam-sdk/pkg/models"
 	"github.com/GoFurry/gf-steam-sdk/pkg/util"
-	"github.com/GoFurry/gf-steam-sdk/pkg/util/errors"
-	"github.com/bytedance/sonic"
 )
 
 const (
@@ -21,37 +20,7 @@ const (
 //   - appID: Game AppID
 //   - lang: Language (e.g. zh/en)
 func (s *DevService) GetPlayerAchievementsRawBytes(steamID string, appID uint64, lang string) (respBytes []byte, err error) {
-	// 参数校验 | Parameter validation
-	if steamID == "" {
-		return respBytes, errors.ErrInvalidSteamID
-	}
-	if appID == 0 {
-		return respBytes, errors.ErrInvalidAppID
-	}
-	// 默认语言 | Default language
-	if lang == "" {
-		lang = "en"
-	}
-
-	// 构建API请求参数 | Build API request parameters
-	params := url.Values{}
-	params.Set("steamid", steamID)
-	params.Set("appid", util.Uint642String(appID))
-	params.Set("l", lang) // 语言参数 | Language parameter
-
-	// 调用Client发送请求 | Call Client to send request (auto trigger retry/proxy/rate limit)
-	resp, err := s.client.DoRequest("GET", ISteamUserStats+"/GetPlayerAchievements/v1/", params)
-	if err != nil {
-		return respBytes, err
-	}
-
-	// 转换为字节流返回 | Convert to bytes and return
-	respBytes, err = sonic.Marshal(resp)
-	if err != nil {
-		return respBytes, fmt.Errorf("%w: marshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return respBytes, nil
+	return api.GetRawBytes(s.buildPlayerAchievements(steamID, appID, lang))
 }
 
 // ============================ 结构化原始模型接口 ============================
@@ -61,24 +30,7 @@ func (s *DevService) GetPlayerAchievementsRawBytes(steamID string, appID uint64,
 //   - appID: Game AppID
 //   - lang: Language (e.g. zh/en)
 func (s *DevService) GetPlayerAchievementsRawModel(steamID string, appID uint64, lang string) (models.SteamPlayerAchievementsResponse, error) {
-	// 获取原始字节流 | Get raw bytes
-	bytes, err := s.GetPlayerAchievementsRawBytes(steamID, appID, lang)
-	if err != nil {
-		return models.SteamPlayerAchievementsResponse{}, err
-	}
-
-	// 解析为原始结构体 | Unmarshal to raw struct
-	var statsResp models.SteamPlayerAchievementsResponse
-	if err = sonic.Unmarshal(bytes, &statsResp); err != nil {
-		return models.SteamPlayerAchievementsResponse{}, fmt.Errorf("%w: unmarshal achievements resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	// 校验请求是否成功 | Validate request success (Steam API business status)
-	if !statsResp.PlayerStats.Success {
-		return models.SteamPlayerAchievementsResponse{}, errors.ErrAchievementFailed
-	}
-
-	return statsResp, nil
+	return api.GetRawModel[models.SteamPlayerAchievementsResponse](s.buildPlayerAchievements(steamID, appID, lang))
 }
 
 // ============================ Brief Model 精简模型接口 ============================
@@ -121,4 +73,19 @@ func (s *DevService) GetPlayerAchievementsBrief(steamID string, appID uint64, la
 //   - lang: Language (e.g. zh/en)
 func (s *DevService) GetPlayerAchievements(steamID string, appID uint64, lang string) ([]models.PlayerAchievement, error) {
 	return s.GetPlayerAchievementsBrief(steamID, appID, lang)
+}
+
+// ============================ Build 构造入参 ============================
+
+// buildPlayerSummaries builds input params.
+func (s *DevService) buildPlayerAchievements(steamID string, appID uint64, lang string) (
+	c *client.Client,
+	method, reqPath string,
+	params url.Values,
+) {
+	params = url.Values{}
+	params.Set("steamid", steamID)
+	params.Set("appid", util.Uint642String(appID))
+	params.Set("l", lang)
+	return s.client, "GET", ISteamUserStats + "/GetPlayerAchievements/v1/", params
 }

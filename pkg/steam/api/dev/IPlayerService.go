@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/GoFurry/gf-steam-sdk/internal/api"
+	"github.com/GoFurry/gf-steam-sdk/internal/client"
 	"github.com/GoFurry/gf-steam-sdk/pkg/models"
 	"github.com/GoFurry/gf-steam-sdk/pkg/util"
-	"github.com/GoFurry/gf-steam-sdk/pkg/util/errors"
-	"github.com/bytedance/sonic"
 )
 
 const (
@@ -20,31 +20,7 @@ const (
 //   - steamID: Player SteamID
 //   - includeFree: Whether to include free games
 func (s *DevService) GetOwnedGamesRawBytes(steamID string, includeFree bool) (respBytes []byte, err error) {
-	// 参数校验 | Parameter validation
-	if steamID == "" {
-		return respBytes, errors.ErrInvalidSteamID
-	}
-
-	// 构建API请求参数 | Build API request parameters
-	params := url.Values{}
-	params.Set("steamid", steamID)
-	params.Set("include_appinfo", "1")                                              // 包含游戏名称/图标 | Include game name/icon
-	params.Set("include_extended_appinfo", "1")                                     // 包含扩展信息 | Include extended info
-	params.Set("include_played_free_games", util.Int2String(util.B2i(includeFree))) // 包含免费游戏 | Include free games
-
-	// 调用Client发送请求 | Call Client (auto apply proxy/rate limit from chain config)
-	resp, err := s.client.DoRequest("GET", IPlayerService+"/GetOwnedGames/v1/", params)
-	if err != nil {
-		return respBytes, err
-	}
-
-	// 转换为字节流返回 | Convert to bytes and return
-	respBytes, err = sonic.Marshal(resp)
-	if err != nil {
-		return respBytes, fmt.Errorf("%w: marshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return respBytes, nil
+	return api.GetRawBytes(s.buildOwnedGames(steamID, includeFree))
 }
 
 // ============================ Structed Raw Model 结构化原始模型接口 ============================
@@ -53,19 +29,7 @@ func (s *DevService) GetOwnedGamesRawBytes(steamID string, includeFree bool) (re
 //   - steamID: Player SteamID
 //   - includeFree: Whether to include free games
 func (s *DevService) GetOwnedGamesRawModel(steamID string, includeFree bool) (models.SteamOwnedGamesResponse, error) {
-	// 获取原始字节流 | Get raw bytes
-	bytes, err := s.GetOwnedGamesRawBytes(steamID, includeFree)
-	if err != nil {
-		return models.SteamOwnedGamesResponse{}, err
-	}
-
-	// 解析为原始结构体 | Unmarshal to raw struct
-	var gamesResp models.SteamOwnedGamesResponse
-	if err = sonic.Unmarshal(bytes, &gamesResp); err != nil {
-		return models.SteamOwnedGamesResponse{}, fmt.Errorf("%w: unmarshal owned games resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return gamesResp, nil
+	return api.GetRawModel[models.SteamOwnedGamesResponse](s.buildOwnedGames(steamID, includeFree))
 }
 
 // ============================ Brief Model 精简模型接口 ============================
@@ -110,4 +74,21 @@ func (s *DevService) GetOwnedGamesBrief(steamID string, includeFree bool) ([]mod
 //   - includeFree: Whether to include free games
 func (s *DevService) GetOwnedGames(steamID string, includeFree bool) ([]models.OwnedGame, error) {
 	return s.GetOwnedGamesBrief(steamID, includeFree)
+}
+
+// ============================ Build 构造入参 ============================
+
+// buildOwnedGames builds input params.
+func (s *DevService) buildOwnedGames(steamID string, includeFree bool) (
+	c *client.Client,
+	method, reqPath string,
+	params url.Values,
+) {
+	params = url.Values{}
+	params.Set("steamid", steamID)
+	params.Set("include_appinfo", "1")                                              // 包含游戏名称/图标 | Include game name/icon
+	params.Set("include_extended_appinfo", "1")                                     // 包含扩展信息 | Include extended info
+	params.Set("include_played_free_games", util.Int2String(util.B2i(includeFree))) // 包含免费游戏 | Include free games
+
+	return s.client, "GET", IPlayerService + "/GetOwnedGames/v1/", params
 }

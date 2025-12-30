@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/GoFurry/gf-steam-sdk/internal/api"
+	"github.com/GoFurry/gf-steam-sdk/internal/client"
 	"github.com/GoFurry/gf-steam-sdk/pkg/models"
 	"github.com/GoFurry/gf-steam-sdk/pkg/util"
-	"github.com/GoFurry/gf-steam-sdk/pkg/util/errors"
-	"github.com/bytedance/sonic"
 )
 
 const (
@@ -18,40 +18,14 @@ const (
 
 // GetAppsRawBytes return game brief info. 返回入参对应游戏的简略信息.
 func (s *DevService) GetAppsRawBytes(appids []string) (respBytes []byte, err error) {
-
-	params := url.Values{}
-	for idx, appid := range appids {
-		params.Set("appids["+util.Int2String(idx)+"]", appid)
-	}
-
-	resp, err := s.client.DoRequest("GET", ICommunityService+"/GetApps/v1/", params)
-	if err != nil {
-		return respBytes, err
-	}
-
-	respBytes, err = sonic.Marshal(resp)
-	if err != nil {
-		return respBytes, fmt.Errorf("%w: marshal resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return respBytes, nil
+	return api.GetRawBytes(s.buildApps(appids))
 }
 
 // ============================ Structed Raw Model 结构化原始模型接口 ============================
 
 // GetAppsRawModel return game brief info. 返回入参对应游戏的简略信息.
 func (s *DevService) GetAppsRawModel(appids []string) (models.GetAppsResponse, error) {
-	bytes, err := s.GetAppsRawBytes(appids)
-	if err != nil {
-		return models.GetAppsResponse{}, err
-	}
-
-	var appResp models.GetAppsResponse
-	if err = sonic.Unmarshal(bytes, &appResp); err != nil {
-		return models.GetAppsResponse{}, fmt.Errorf("%w: unmarshal app resp failed: %v", errors.ErrAPIResponse, err)
-	}
-
-	return appResp, nil
+	return api.GetRawModel[models.GetAppsResponse](s.buildApps(appids))
 }
 
 // ============================ Brief Model 精简模型接口 ============================
@@ -84,4 +58,19 @@ func (s *DevService) GetAppsBrief(appids []string) ([]models.AppBriefInfo, error
 // GetApps return game brief info. 返回入参对应游戏的简略信息.
 func (s *DevService) GetApps(appids []string) ([]models.AppBriefInfo, error) {
 	return s.GetAppsBrief(appids)
+}
+
+// ============================ Build 构造入参 ============================
+
+// buildApps builds input params.
+func (s *DevService) buildApps(appids []string) (
+	c *client.Client,
+	method, reqPath string,
+	params url.Values,
+) {
+	params = url.Values{}
+	for idx, appid := range appids {
+		params.Set("appids["+util.Int2String(idx)+"]", appid)
+	}
+	return s.client, "GET", ICommunityService + "/GetApps/v1/", params
 }

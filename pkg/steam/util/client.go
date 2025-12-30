@@ -33,3 +33,8 @@ func (u *UtilService) Close() error {
 	}
 	return nil
 }
+
+// Client 对外暴露 client
+func (u *UtilService) Client() *client.Client {
+	return u.client
+}
